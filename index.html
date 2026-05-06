@@ -17,7 +17,6 @@
     --text: #1a1916;
     --muted: #6b6960;
     --accent: #1d4e3a;
-    --accent-light: #e1f5ee;
     --vmt-color: #185FA5;
     --amt-color: #533AB7;
     --e-color: #D85A30;
@@ -39,7 +38,6 @@
       --text: #eae8e0;
       --muted: #9a9890;
       --accent: #5DCAA5;
-      --accent-light: #04342C;
       --vmt-color: #85B7EB;
       --amt-color: #AFA9EC;
       --e-color: #F0997B;
@@ -107,26 +105,25 @@
     font-weight: 600;
   }
 
-  .param-container { margin-bottom: 16px; }
-  .param-container:last-child { margin-bottom: 0; }
+  .param-group { margin-bottom: 16px; }
+  .param-group:last-child { margin-bottom: 0; }
 
   .param-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
+    align-items: baseline;
+    margin-bottom: 6px;
   }
 
   .param-label {
-    font-size: 11.5px;
-    color: var(--text);
-    font-weight: 400;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
   }
   .param-value {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
-    color: var(--accent);
-    font-weight: 500;
+    color: var(--text);
   }
 
   select {
@@ -136,9 +133,7 @@
     border-radius: 4px;
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
-    margin-top: 4px;
   }
 
   input[type=range] {
@@ -149,7 +144,6 @@
     border-radius: 99px;
     outline: none;
     cursor: pointer;
-    display: block;
   }
   input[type=range]::-webkit-slider-thumb {
     appearance: none;
@@ -157,17 +151,10 @@
     height: 12px;
     border-radius: 50%;
     background: var(--accent);
-    cursor: pointer;
     border: 1px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--accent);
   }
 
-  .main {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
-  }
+  .main { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
 
   .stat-bar {
     display: grid;
@@ -175,87 +162,39 @@
     gap: 1px;
     background: var(--border);
     border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
   }
   .stat-card {
     background: var(--surface);
     padding: 14px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
   }
-  .stat-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  .stat-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 18px;
-    font-weight: 500;
-  }
-  .stat-sub {
-    font-size: 10px;
-    color: var(--muted);
-  }
+  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .stat-value { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; margin: 2px 0; }
+  .stat-sub { font-size: 10px; color: var(--muted); }
 
-  .tab-bar {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    flex-shrink: 0;
-  }
+  .tab-bar { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); }
   .tab-btn {
-    font-size: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: all 0.15s;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--muted);
+    background: none; border: none; border-bottom: 2px solid transparent;
+    padding: 12px 20px; cursor: pointer; transition: 0.15s;
   }
   .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
 
-  .charts-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    overflow-y: auto;
-    background: var(--border);
-  }
-
+  .charts-area { flex: 1; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; background: var(--border); }
   .chart-group { display: none; flex-direction: column; gap: 1px; flex: 1; }
   .chart-group.active { display: flex; }
-
-  .chart-panel { background: var(--bg); flex: 1; display: flex; align-items: stretch; min-height: 240px; }
-  .chart-wrap { flex: 1; padding: 20px 24px; display: flex; flex-direction: column; }
-  .chart-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .chart-panel { background: var(--bg); flex: 1; min-height: 250px; padding: 20px; display: flex; flex-direction: column; }
+  .chart-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
   .chart-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .chart-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+  .chart-title { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
   .chart-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
   .canvas-wrap { flex: 1; position: relative; }
   .canvas-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 
   .reset-btn {
-    width: calc(100% - 40px);
-    margin: 20px;
-    padding: 8px;
-    background: none;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    font-size: 11px;
-    cursor: pointer;
-    color: var(--muted);
+    width: calc(100% - 40px); margin: 20px; padding: 8px;
+    background: none; border: 1px solid var(--border-strong);
+    border-radius: var(--radius); font-size: 11px; cursor: pointer; color: var(--muted);
   }
-  .reset-btn:hover { background: var(--bg); color: var(--text); }
-
 </style>
 </head>
 <body>
@@ -270,23 +209,23 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-title">Urban Morphology (LCZ)</div>
-      <div class="param-container">
-        <div class="param-label">Starting LCZ (2026)</div>
+      <div class="param-group">
+        <div class="param-label">Start LCZ (2026)</div>
         <select id="lcz_start"></select>
       </div>
-      <div class="param-container">
-        <div class="param-label">Target LCZ (2050)</div>
+      <div class="param-group">
+        <div class="param-label">End LCZ (2050)</div>
         <select id="lcz_end"></select>
       </div>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Climate & Environment</div>
-      <div class="param-container">
+      <div class="sidebar-section-title">Climate</div>
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Baseline Temp (K)</span><span class="param-value" id="v_tbase"></span></div>
         <input type="range" id="tbase" min="270" max="320" step="0.5" value="311">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Warming Rate (K/yr)</span><span class="param-value" id="v_ccrate"></span></div>
         <input type="range" id="ccrate" min="0" max="0.2" step="0.001" value="0.05">
       </div>
@@ -294,43 +233,43 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-title">Population & Density</div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Initial Pop (Agents)</span><span class="param-value" id="v_pop0"></span></div>
         <input type="range" id="pop0" min="10000" max="5000000" step="10000" value="1000000">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Pop Growth Rate</span><span class="param-value" id="v_popgrowth"></span></div>
         <input type="range" id="popgrowth" min="-0.05" max="0.05" step="0.001" value="0.005">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Initial Density (pop/sqmi)</span><span class="param-value" id="v_d0"></span></div>
         <input type="range" id="d0" min="500" max="25000" step="100" value="5000">
       </div>
-      <div class="param-container">
-        <div class="param-header"><span class="param-label">Density Change (pop/sqmi/yr)</span><span class="param-value" id="v_d"></span></div>
+      <div class="param-group">
+        <div class="param-header"><span class="param-label">Density Change (pop/sqmi)</span><span class="param-value" id="v_d"></span></div>
         <input type="range" id="d" min="-200" max="200" step="1" value="0">
       </div>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Transport Parameters</div>
-      <div class="param-container">
+      <div class="sidebar-section-title">Transport Elasticities</div>
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Initial VMT (miles)</span><span class="param-value" id="v_vmt0"></span></div>
         <input type="range" id="vmt0" min="1" max="60" step="0.5" value="15">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">Initial AMT (miles)</span><span class="param-value" id="v_amt0"></span></div>
         <input type="range" id="amt0" min="0" max="30" step="0.5" value="5">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">VMT/AMT Conv. Factor (cf)</span><span class="param-value" id="v_cf"></span></div>
         <input type="range" id="cf" min="0.5" max="5" step="0.1" value="1.6">
       </div>
-      <div class="param-container">
-        <div class="param-header"><span class="param-label">VMT Elasticity (Density)</span><span class="param-value" id="v_lambda1"></span></div>
+      <div class="param-group">
+        <div class="param-header"><span class="param-label">VMT Elasticity (BE Density)</span><span class="param-value" id="v_lambda1"></span></div>
         <input type="range" id="lambda1" min="-1" max="1" step="0.01" value="-0.2">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">VMT Elasticity (Temp)</span><span class="param-value" id="v_lambda2"></span></div>
         <input type="range" id="lambda2" min="-1" max="1" step="0.01" value="0">
       </div>
@@ -338,15 +277,11 @@
 
     <div class="sidebar-section">
       <div class="sidebar-section-title">Technology & Emissions</div>
-      <div class="param-container">
-        <div class="param-header"><span class="param-label">EV Adoption Rate</span><span class="param-value" id="v_egrowth"></span></div>
-        <input type="range" id="egrowth" min="0.01" max="0.5" step="0.005" value="0.15">
-      </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">ICE Emissions (kgCO2/mi)</span><span class="param-value" id="v_ef"></span></div>
         <input type="range" id="ef" min="0.05" max="0.8" step="0.005" value="0.37">
       </div>
-      <div class="param-container">
+      <div class="param-group">
         <div class="param-header"><span class="param-label">EV Grid Emissions (kgCO2/mi)</span><span class="param-value" id="v_efgrid"></span></div>
         <input type="range" id="efgrid" min="0.01" max="0.4" step="0.005" value="0.105">
       </div>
@@ -381,22 +316,22 @@
 
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('mobility', this)">Mobility</button>
-      <button class="tab-btn" onclick="switchTab('emissions', this)">Impacts</button>
+      <button class="tab-btn" onclick="switchTab('impacts', this)">Impacts</button>
       <button class="tab-btn" onclick="switchTab('context', this)">Context</button>
     </div>
 
     <div class="charts-area">
       <div class="chart-group active" id="group_mobility">
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--vmt-color)"></div><span class="chart-title">VMT</span><span class="chart-desc">miles / agent / day</span></div><div class="canvas-wrap"><canvas id="chart_vmt"></canvas></div></div></div>
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--amt-color)"></div><span class="chart-title">AMT</span><span class="chart-desc">miles / agent / day</span></div><div class="canvas-wrap"><canvas id="chart_amt"></canvas></div></div></div>
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--vmt-color)"></div><span class="chart-title">VMT</span><span class="chart-desc">miles / agent / day</span></div><div class="canvas-wrap"><canvas id="chart_vmt"></canvas></div></div>
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--amt-color)"></div><span class="chart-title">AMT</span><span class="chart-desc">miles / agent / day</span></div><div class="canvas-wrap"><canvas id="chart_amt"></canvas></div></div>
       </div>
-      <div class="chart-group" id="group_emissions">
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--e-color)"></div><span class="chart-title">Total Emissions</span><span class="chart-desc">kg CO₂ / day</span></div><div class="canvas-wrap"><canvas id="chart_e"></canvas></div></div></div>
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--h-color)"></div><span class="chart-title">Heat Exposure</span><span class="chart-desc">mi·K / day</span></div><div class="canvas-wrap"><canvas id="chart_h"></canvas></div></div></div>
+      <div class="chart-group" id="group_impacts">
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--e-color)"></div><span class="chart-title">Total Emissions</span><span class="chart-desc">kg CO₂ / day</span></div><div class="canvas-wrap"><canvas id="chart_e"></canvas></div></div>
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--h-color)"></div><span class="chart-title">Heat Exposure</span><span class="chart-desc">mi·K / day</span></div><div class="canvas-wrap"><canvas id="chart_h"></canvas></div></div>
       </div>
       <div class="chart-group" id="group_context">
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--pop-color)"></div><span class="chart-title">Population</span><span class="chart-desc">Agents</span></div><div class="canvas-wrap"><canvas id="chart_pop"></canvas></div></div></div>
-        <div class="chart-panel"><div class="chart-wrap"><div class="chart-header"><div class="chart-dot" style="background: var(--dens-color)"></div><span class="chart-title">Density</span><span class="chart-desc">pop / sqmi</span></div><div class="canvas-wrap"><canvas id="chart_dens"></canvas></div></div></div>
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--pop-color)"></div><span class="chart-title">Population</span><span class="chart-desc">Agents</span></div><div class="canvas-wrap"><canvas id="chart_pop"></canvas></div></div>
+        <div class="chart-panel"><div class="chart-header"><div class="chart-dot" style="background: var(--dens-color)"></div><span class="chart-title">Density</span><span class="chart-desc">pop / sqmi</span></div><div class="canvas-wrap"><canvas id="chart_dens"></canvas></div></div>
       </div>
     </div>
   </main>
@@ -419,21 +354,19 @@ const DEFAULTS = {
   d0: 5000, d: 0,
   vmt0: 15.0, amt0: 5.0, cf: 1.6,
   lambda1: -0.2, lambda2: 0,
-  egrowth: 0.15, ef: 0.37, efgrid: 0.105
+  ef: 0.37, efgrid: 0.105
 };
 
-const T_MAX = 24; // 2026 to 2050
+const T_MAX = 24; 
 const YEARS = Array.from({length: T_MAX + 1}, (_, i) => 2026 + i);
 
-// Populate Selects
 const sStart = document.getElementById('lcz_start');
 const sEnd = document.getElementById('lcz_end');
 Object.keys(LCZ_PROFILES).forEach(k => {
   sStart.add(new Option(k, k));
   sEnd.add(new Option(k, k));
 });
-sStart.value = 'LCZ2';
-sEnd.value = 'LCZ5';
+sStart.value = 'LCZ2'; sEnd.value = 'LCZ5';
 
 function simulate() {
   const v = {};
@@ -441,85 +374,63 @@ function simulate() {
   const l1 = LCZ_PROFILES[sStart.value];
   const l2 = LCZ_PROFILES[sEnd.value];
 
-  const results = { vmt: [], amt: [], e: [], h: [], pop: [], dens: [] };
+  const res = { vmt: [], amt: [], e: [], h: [], pop: [], dens: [] };
 
   for (let t = 0; t <= T_MAX; t++) {
-    const frac = t / T_MAX;
-    const a1 = l1.a1 + (l2.a1 - l1.a1) * frac;
-    const a2 = l1.a2 + (l2.a2 - l1.a2) * frac;
-    const b1 = l1.b1 + (l2.b1 - l1.b1) * frac;
+    const f = t / T_MAX;
+    const a1 = l1.a1 + (l2.a1 - l1.a1) * f;
+    const a2 = l1.a2 + (l2.a2 - l1.a2) * f;
+    const b1 = l1.b1 + (l2.b1 - l1.b1) * f;
 
     const pop = v.pop0 * Math.exp(v.popgrowth * t);
     const dens = v.d0 + v.d * t;
-    const tempK = v.tbase + (v.ccrate * t);
+    const airK = v.tbase + (v.ccrate * t);
     
-    // Morphological temperature logic
-    const x = tempK - 273.15;
-    const deltamrt = a1 * x * x + a2 * x + b1 - x;
-    const surfaceTempK = tempK + deltamrt;
-
-    // Relative to initial condition for scaling
-    const dt0_x = v.tbase - 273.15;
-    const deltamrt0 = l1.a1 * dt0_x * dt0_x + l1.a2 * dt0_x + l1.b1 - dt0_x;
-    const dt_safe0 = Math.max(0.1, deltamrt0);
-    const dt_safe = Math.max(0.1, deltamrt + (v.ccrate * t));
+    const x = airK - 273.15;
+    const surfK = (a1 * x * x + a2 * x + b1) + 273.15;
+    const dT = Math.max(0.1, surfK - airK);
 
     const tmtmax = v.vmt0 + v.amt0 * v.cf;
-    const a3 = v.vmt0 / (Math.pow(v.d0, v.lambda1) * Math.pow(dt_safe0, v.lambda2));
+    const a3 = v.vmt0 / (Math.pow(v.d0, v.lambda1) * Math.pow(Math.max(0.1, (l1.a1 * x * x + l1.a2 * x + l1.b1) - x), v.lambda2));
     
-    const vmt_val = Math.min(tmtmax, a3 * Math.pow(Math.max(1, dens), v.lambda1) * Math.pow(dt_safe, v.lambda2));
-    const amt_val = Math.max(0, (tmtmax - vmt_val) / v.cf);
+    const vmt = Math.min(tmtmax, a3 * Math.pow(Math.max(1, dens), v.lambda1) * Math.pow(dT, v.lambda2));
+    const amt = Math.max(0, (tmtmax - vmt) / v.cf);
+    const elec = 0.9 / (1 + (0.9 / 0.05 - 1) * Math.exp(-0.15 * t));
 
-    const elec = 0.9 / (1 + (0.9 / 0.05 - 1) * Math.exp(-v.egrowth * t));
-    const e_val = pop * ((1 - elec) * vmt_val * v.ef + elec * vmt_val * v.efgrid);
-    const h_val = pop * amt_val * surfaceTempK;
-
-    results.vmt.push(vmt_val); results.amt.push(amt_val);
-    results.e.push(e_val); results.h.push(h_val);
-    results.pop.push(pop); results.dens.push(dens);
+    res.vmt.push(vmt); res.amt.push(amt);
+    res.e.push(pop * vmt * ((1 - elec) * v.ef + elec * v.efgrid));
+    res.h.push(pop * amt * surfK);
+    res.pop.push(pop); res.dens.push(dens);
   }
-  return results;
+  return res;
 }
 
-function makeChart(id, color, label) {
+function makeChart(id, color) {
   return new Chart(document.getElementById(id), {
     type: 'line',
     data: { labels: YEARS, datasets: [{ data: [], borderColor: color, borderWidth: 2, pointRadius: 0, tension: 0.2, fill: true, backgroundColor: color + '11' }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { family: 'DM Mono', size: 9 } } },
-        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { family: 'DM Mono', size: 9 } } }
-      }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false }, ticks: { font: { family: 'DM Mono', size: 9 } } }, y: { ticks: { font: { family: 'DM Mono', size: 9 } } } }
     }
   });
 }
 
-const charts = {
-  vmt: makeChart('chart_vmt', '#185FA5'),
-  amt: makeChart('chart_amt', '#533AB7'),
-  e: makeChart('chart_e', '#D85A30'),
-  h: makeChart('chart_h', '#854F0B'),
-  pop: makeChart('chart_pop', '#6b6960'),
-  dens: makeChart('chart_dens', '#3C3489')
-};
+const charts = { vmt: makeChart('chart_vmt', '#185FA5'), amt: makeChart('chart_amt', '#533AB7'), e: makeChart('chart_e', '#D85A30'), h: makeChart('chart_h', '#854F0B'), pop: makeChart('chart_pop', '#6b6960'), dens: makeChart('chart_dens', '#3C3489') };
 
 function update() {
   const data = simulate();
-  Object.keys(charts).forEach(k => {
-    charts[k].data.datasets[0].data = data[k];
-    charts[k].update('none');
-  });
-  
+  Object.keys(charts).forEach(k => { charts[k].data.datasets[0].data = data[k]; charts[k].update('none'); });
   document.getElementById('stat_vmt').textContent = data.vmt[T_MAX].toFixed(2);
   document.getElementById('stat_amt').textContent = data.amt[T_MAX].toFixed(2);
   document.getElementById('stat_e').textContent = Math.round(data.e[T_MAX]).toLocaleString();
-  document.getElementById('stat_h').textContent = (data.h[T_MAX] / 1e6).toFixed(2) + "M";
+  document.getElementById('stat_h').textContent = (data.h[T_MAX] / 1e6).toFixed(2);
 
   Object.keys(DEFAULTS).forEach(k => {
-    const val = parseFloat(document.getElementById(k).value);
-    document.getElementById('v_'+k).textContent = val >= 1000 ? val.toLocaleString() : val.toFixed(3);
+    const el = document.getElementById('v_'+k);
+    if(el) {
+      const val = parseFloat(document.getElementById(k).value);
+      el.textContent = val >= 1000 ? Math.round(val).toLocaleString() : val.toFixed(3);
+    }
   });
 }
 
