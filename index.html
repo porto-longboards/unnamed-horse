@@ -3,135 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TransRDM — Simulation Dashboard</title>
+<title>TransRDM — Resilient Infrastructure Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f5f4f0; --surface: #ffffff; --border: #e2e0d8;
-    --border-strong: #c8c6bc; --text: #1a1916; --muted: #6b6960;
-    --accent: #1d4e3a;
-    --vmt-color: #185FA5; --amt-color: #533AB7; --e-color: #D85A30;
-    --h-color: #854F0B; --temp-color: #A32D2D; --elec-color: #0F6E56;
-    --pop-color: #6b6960; --dens-color: #3C3489;
-    --slider-h: 3px; --radius: 8px;
+    /* RIL dark palette */
+    --bg:            #0f0c0d;
+    --surface:       #1a1518;
+    --surface2:      #221c1f;
+    --border:        #2e2428;
+    --border-strong: #3e3035;
+    --text:          #ede8e0;
+    --muted:         #8a8078;
+    --accent:        #8c1f3f;   /* ASU maroon */
+    --accent-light:  #b5254f;
+    --accent-glow:   rgba(140,31,63,0.18);
+
+    /* chart colors — warm desert palette */
+    --vmt-color:  #c07a3a;   /* sandstone orange */
+    --amt-color:  #7a9e6e;   /* saguaro green */
+    --e-color:    #b5254f;   /* maroon */
+    --h-color:    #d4833a;   /* amber/clay */
+    --temp-color: #c04a35;   /* terracotta */
+    --elec-color: #5a8fa0;   /* sky/water blue */
+    --pop-color:  #8a8078;   /* muted */
+    --dens-color: #9a7a5a;   /* adobe */
+
+    --radius: 6px;
+    --slider-h: 3px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #141410; --surface: #1e1e1a; --border: #2e2e28;
-      --border-strong: #3e3e36; --text: #eae8e0; --muted: #9a9890;
-      --accent: #5DCAA5;
-      --vmt-color: #85B7EB; --amt-color: #AFA9EC; --e-color: #F0997B;
-      --h-color: #EF9F27; --temp-color: #F09595; --elec-color: #5DCAA5;
-      --pop-color: #9a9890; --dens-color: #7F77DD;
-    }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
   }
 
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .header-text { display: flex; flex-direction: column; gap: 1px; }
+  .header-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header-badge {
+    margin-left: auto;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 3px 8px;
+    font-weight: 500;
+  }
 
-  header { border-bottom: 1px solid var(--border); padding: 18px 32px; display: flex; align-items: baseline; gap: 16px; background: var(--surface); }
-  header h1 { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; font-family: 'DM Mono', monospace; }
-  header span { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 290px 1fr;
+    height: calc(100vh - 69px);
+  }
 
-  .layout { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 57px); }
+  /* ── Sidebar ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+  }
+  .sidebar-section-title {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
 
-  /* Sidebar */
-  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; }
-  .sidebar-section { border-bottom: 1px solid var(--border); padding: 14px 18px; }
-  .sidebar-section-title { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; font-weight: 500; }
-
-  /* Each param: label+value on one row, slider directly beneath */
-  .param-block { margin-bottom: 14px; }
+  .param-block { margin-bottom: 13px; }
   .param-block:last-child { margin-bottom: 0; }
-  .param-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .param-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
   .param-label { font-size: 11px; color: var(--muted); line-height: 1.3; }
-  .param-value { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); min-width: 44px; text-align: right; flex-shrink: 0; margin-left: 6px; }
+  .param-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    min-width: 44px;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 6px;
+  }
 
   input[type=range] {
     width: 100%; height: var(--slider-h); appearance: none;
-    background: var(--border); border-radius: 99px; outline: none; cursor: pointer; display: block;
+    background: var(--border); border-radius: 99px;
+    outline: none; cursor: pointer; display: block;
   }
   input[type=range]::-webkit-slider-thumb {
-    appearance: none; width: 14px; height: 14px; border-radius: 50%;
-    background: var(--accent); cursor: pointer; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
+    appearance: none; width: 13px; height: 13px; border-radius: 50%;
+    background: var(--accent-light); cursor: pointer;
+    border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--accent);
   }
   input[type=range]::-moz-range-thumb {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--accent); cursor: pointer; border: 2px solid var(--surface);
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--accent-light); cursor: pointer; border: 2px solid var(--surface);
   }
 
-  /* LCZ dropdowns */
-  .lcz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  /* LCZ */
+  .lcz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
   .lcz-col { display: flex; flex-direction: column; gap: 6px; }
-  .lcz-col-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+  .lcz-col-label {
+    font-size: 9px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.1em; padding-bottom: 5px; border-bottom: 1px solid var(--border);
+  }
   .lcz-select {
-    font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text);
-    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    color: var(--text); background: var(--surface2);
+    border: 1px solid var(--border); border-radius: var(--radius);
     padding: 5px 8px; cursor: pointer; outline: none; width: 100%;
   }
   .lcz-select:focus { border-color: var(--accent); }
-  .lcz-params { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); line-height: 1.8; margin-top: 2px; }
+  .lcz-params {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--muted); line-height: 1.8; margin-top: 2px;
+  }
 
   .reset-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-size: 11px; font-family: 'DM Sans', sans-serif; color: var(--muted);
     background: none; border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 6px 10px; cursor: pointer; margin: 12px 18px; width: calc(100% - 36px);
+    padding: 6px 10px; cursor: pointer; margin: 12px 16px; width: calc(100% - 32px);
     transition: all 0.15s;
   }
-  .reset-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent-light); }
 
-  /* Main */
-  .main { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+  /* ── Main ── */
+  .main { display: flex; flex-direction: column; overflow: hidden; }
 
-  .stat-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .stat-card { background: var(--surface); padding: 12px 18px; display: flex; flex-direction: column; gap: 2px; }
-  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-  .stat-value { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
+  /* Stat bar */
+  .stat-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .stat-card {
+    background: var(--surface); padding: 11px 16px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .stat-value { font-family: 'DM Mono', monospace; font-size: 19px; font-weight: 500; }
   .stat-sub { font-size: 10px; color: var(--muted); }
 
-  .tab-bar { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; overflow-x: auto; }
-  .tab-btn {
-    font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 500;
-    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
-    background: none; border: none; border-bottom: 2px solid transparent;
-    padding: 10px 16px; cursor: pointer; white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s; display: flex; align-items: center; gap: 6px;
+  /* Charts scrollable area — all groups always visible */
+  .charts-area {
+    flex: 1; overflow-y: auto;
+    display: flex; flex-direction: column;
+    background: var(--bg);
   }
-  .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
-  .tab-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-  .charts-area { flex: 1; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; background: var(--border); }
-  .chart-group { display: none; flex-direction: column; gap: 1px; flex: 1; }
-  .chart-group.active { display: flex; }
-  .chart-panel { background: var(--bg); flex: 1; display: flex; }
-  .chart-wrap { flex: 1; padding: 14px 22px 8px; display: flex; flex-direction: column; }
-  .chart-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .chart-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .chart-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
-  .chart-desc { font-size: 11px; color: var(--muted); margin-left: auto; }
+  /* Section divider between groups */
+  .chart-group { display: flex; flex-direction: column; }
+  .chart-group-header {
+    background: var(--surface2);
+    padding: 7px 22px;
+    font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0; position: sticky; top: 0; z-index: 2;
+  }
+  .chart-group-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Individual panels — fixed height so all fit without needing to stretch */
+  .chart-panel {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    height: 200px;
+    display: flex; flex-shrink: 0;
+  }
+  .chart-wrap { flex: 1; padding: 12px 20px 8px; display: flex; flex-direction: column; }
+  .chart-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+  .chart-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .chart-title {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); font-weight: 500;
+  }
+  .chart-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
   .canvas-wrap { flex: 1; position: relative; min-height: 0; }
   .canvas-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; opacity: 0.5; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>TransRDM</h1>
-  <span>Urban mobility simulation · 2026 – 2050</span>
+  <img src="RIL_Logo.png" alt="Resilient Infrastructure Lab logo" class="header-logo">
+  <div class="header-text">
+    <div class="header-title">TransRDM</div>
+    <div class="header-sub">Resilient Infrastructure Lab · Arizona State University</div>
+  </div>
+  <div class="header-badge">2026 – 2050</div>
 </header>
 
 <div class="layout">
 <aside class="sidebar">
 
-  <!-- LCZ -->
   <div class="sidebar-section">
     <div class="sidebar-section-title">Urban Morphology (LCZ)</div>
     <div class="lcz-grid">
@@ -162,10 +274,8 @@
     </div>
   </div>
 
-  <!-- CLIMATE -->
   <div class="sidebar-section">
     <div class="sidebar-section-title">Climate</div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Baseline temp (K)</span>
@@ -173,7 +283,6 @@
       </div>
       <input type="range" id="tbase" min="295" max="325" step="0.5" value="311" oninput="syncLabel('tbase');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Warming rate (°C/yr)</span>
@@ -183,10 +292,8 @@
     </div>
   </div>
 
-  <!-- POPULATION & DENSITY -->
   <div class="sidebar-section">
     <div class="sidebar-section-title">Population &amp; Density</div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Initial population (agents)</span>
@@ -194,7 +301,6 @@
       </div>
       <input type="range" id="pop0" min="1" max="100" step="1" value="1" oninput="syncLabel('pop0');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Population growth rate</span>
@@ -202,7 +308,6 @@
       </div>
       <input type="range" id="popgrowth" min="-0.05" max="0.05" step="0.001" value="0" oninput="syncLabel('popgrowth');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Initial density (pop/sq mi)</span>
@@ -210,7 +315,6 @@
       </div>
       <input type="range" id="d0" min="100" max="20000" step="100" value="1000" oninput="syncLabel('d0');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Density change rate (pop/sq mi/yr)</span>
@@ -220,10 +324,8 @@
     </div>
   </div>
 
-  <!-- TRANSPORT -->
   <div class="sidebar-section">
     <div class="sidebar-section-title">Transport</div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Initial VMT (mi/agent/day)</span>
@@ -231,7 +333,6 @@
       </div>
       <input type="range" id="vmt0" min="1" max="60" step="0.5" value="15" oninput="syncLabel('vmt0');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Initial AMT (mi/agent/day)</span>
@@ -239,7 +340,6 @@
       </div>
       <input type="range" id="amt0" min="0" max="30" step="0.5" value="5" oninput="syncLabel('amt0');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">VMT/AMT conversion factor (cf)</span>
@@ -247,7 +347,6 @@
       </div>
       <input type="range" id="cf" min="0.5" max="5" step="0.1" value="1.6" oninput="syncLabel('cf');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">VMT elasticity wrt BE density (λ₁)</span>
@@ -255,7 +354,6 @@
       </div>
       <input type="range" id="lambda1" min="-1" max="1" step="0.01" value="-0.2" oninput="syncLabel('lambda1');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">VMT elasticity wrt temperature (λ₂)</span>
@@ -265,10 +363,8 @@
     </div>
   </div>
 
-  <!-- TECHNOLOGY & EMISSIONS -->
   <div class="sidebar-section">
     <div class="sidebar-section-title">Technology &amp; Emissions</div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">EV adoption rate</span>
@@ -276,7 +372,6 @@
       </div>
       <input type="range" id="egrowth" min="0.01" max="0.5" step="0.005" value="0.15" oninput="syncLabel('egrowth');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Initial EV share</span>
@@ -284,7 +379,6 @@
       </div>
       <input type="range" id="elec0" min="0.01" max="0.5" step="0.01" value="0.05" oninput="syncLabel('elec0');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">Max EV share</span>
@@ -292,7 +386,6 @@
       </div>
       <input type="range" id="elecmax" min="0.1" max="1" step="0.01" value="0.9" oninput="syncLabel('elecmax');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">ICE emissions (kgCO₂/mi)</span>
@@ -300,7 +393,6 @@
       </div>
       <input type="range" id="ef" min="0.05" max="0.8" step="0.005" value="0.37" oninput="syncLabel('ef');updateCharts()">
     </div>
-
     <div class="param-block">
       <div class="param-header">
         <span class="param-label">EV grid emissions (kgCO₂/mi)</span>
@@ -339,21 +431,13 @@
     </div>
   </div>
 
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('mobility',this)">
-      <span class="tab-dot" style="background:var(--vmt-color)"></span>Mobility
-    </button>
-    <button class="tab-btn" onclick="switchTab('emissions',this)">
-      <span class="tab-dot" style="background:var(--e-color)"></span>Emissions &amp; Heat
-    </button>
-    <button class="tab-btn" onclick="switchTab('context',this)">
-      <span class="tab-dot" style="background:var(--elec-color)"></span>Context
-    </button>
-  </div>
-
   <div class="charts-area">
 
-    <div class="chart-group active" id="group_mobility">
+    <!-- MOBILITY -->
+    <div class="chart-group">
+      <div class="chart-group-header">
+        <span class="chart-group-dot" style="background:var(--vmt-color)"></span>Mobility
+      </div>
       <div class="chart-panel">
         <div class="chart-wrap">
           <div class="chart-header">
@@ -376,7 +460,11 @@
       </div>
     </div>
 
-    <div class="chart-group" id="group_emissions">
+    <!-- EMISSIONS & HEAT -->
+    <div class="chart-group">
+      <div class="chart-group-header">
+        <span class="chart-group-dot" style="background:var(--e-color)"></span>Emissions &amp; Heat
+      </div>
       <div class="chart-panel">
         <div class="chart-wrap">
           <div class="chart-header">
@@ -404,12 +492,16 @@
             <span class="chart-title">MRT — Mean Radiant Temperature</span>
             <span class="chart-desc">K</span>
           </div>
-          <div class="canvas-wrap"><canvas id="chart_temp" role="img" aria-label="Temperature 2026-2050">Temperature over simulation period.</canvas></div>
+          <div class="canvas-wrap"><canvas id="chart_temp" role="img" aria-label="MRT 2026-2050">MRT over simulation period.</canvas></div>
         </div>
       </div>
     </div>
 
-    <div class="chart-group" id="group_context">
+    <!-- CONTEXT -->
+    <div class="chart-group">
+      <div class="chart-group-header">
+        <span class="chart-group-dot" style="background:var(--elec-color)"></span>Context
+      </div>
       <div class="chart-panel">
         <div class="chart-wrap">
           <div class="chart-header">
@@ -461,7 +553,6 @@ function lczParamText(key) {
   const p = LCZ_PROFILES[key];
   return `a\u2081 = ${p.a1}\na\u2082 = ${p.a2}\nb\u2081 = ${p.b1}`;
 }
-
 function onLCZChange() {
   document.getElementById('lcz_start_params').textContent = lczParamText(document.getElementById('lcz_start').value);
   document.getElementById('lcz_end_params').textContent   = lczParamText(document.getElementById('lcz_end').value);
@@ -542,16 +633,15 @@ function simulate(v) {
   return { vmt: vmt_a, amt: amt_a, e: e_a, h: h_a, temp: temp_a, elec: elec_a, pop: pop_a, dens: dens_a };
 }
 
-const isDark    = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-const tickColor = isDark ? '#9a9890' : '#6b6960';
+const gridColor = 'rgba(255,255,255,0.05)';
+const tickColor = '#5a5048';
 
 function makeChart(id, color, data) {
   return new Chart(document.getElementById(id), {
     type: 'line',
     data: { labels: YEARS, datasets: [{ data, borderColor: color, borderWidth: 1.5,
             pointRadius: 0, tension: 0.2,
-            fill: { target: 'origin', above: color + (isDark ? '22' : '18') } }] },
+            fill: { target: 'origin', above: color + '28' } }] },
     options: {
       responsive: true, maintainAspectRatio: false, animation: { duration: 120 },
       plugins: { legend: { display: false },
@@ -569,14 +659,14 @@ function makeChart(id, color, data) {
 }
 
 let sim = simulate(DEFAULTS);
-const chartVMT  = makeChart('chart_vmt',  isDark ? '#85B7EB' : '#185FA5', sim.vmt);
-const chartAMT  = makeChart('chart_amt',  isDark ? '#AFA9EC' : '#533AB7', sim.amt);
-const chartE    = makeChart('chart_e',    isDark ? '#F0997B' : '#D85A30', sim.e);
-const chartH    = makeChart('chart_h',    isDark ? '#EF9F27' : '#854F0B', sim.h);
-const chartTemp = makeChart('chart_temp', isDark ? '#F09595' : '#A32D2D', sim.temp);
-const chartElec = makeChart('chart_elec', isDark ? '#5DCAA5' : '#0F6E56', sim.elec);
-const chartPop  = makeChart('chart_pop',  isDark ? '#9a9890' : '#6b6960', sim.pop);
-const chartDens = makeChart('chart_dens', isDark ? '#7F77DD' : '#3C3489', sim.dens);
+const chartVMT  = makeChart('chart_vmt',  '#c07a3a', sim.vmt);
+const chartAMT  = makeChart('chart_amt',  '#7a9e6e', sim.amt);
+const chartE    = makeChart('chart_e',    '#b5254f', sim.e);
+const chartH    = makeChart('chart_h',    '#d4833a', sim.h);
+const chartTemp = makeChart('chart_temp', '#c04a35', sim.temp);
+const chartElec = makeChart('chart_elec', '#5a8fa0', sim.elec);
+const chartPop  = makeChart('chart_pop',  '#8a8078', sim.pop);
+const chartDens = makeChart('chart_dens', '#9a7a5a', sim.dens);
 const ALL_CHARTS = [chartVMT, chartAMT, chartE, chartH, chartTemp, chartElec, chartPop, chartDens];
 
 function updateStats(s) {
@@ -607,7 +697,6 @@ function syncLabel(k) {
   const val = parseFloat(document.getElementById(k).value);
   el.textContent = Math.abs(val) >= 10 ? val.toFixed(0) : val.toFixed(3);
 }
-
 function syncAllLabels() { SLIDER_IDS.forEach(k => syncLabel(k)); }
 
 function resetDefaults() {
@@ -616,14 +705,6 @@ function resetDefaults() {
   document.getElementById('lcz_end').value   = 'LCZ5';
   syncAllLabels();
   onLCZChange();
-}
-
-function switchTab(name, btn) {
-  document.querySelectorAll('.chart-group').forEach(g => g.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('group_' + name).classList.add('active');
-  btn.classList.add('active');
-  ALL_CHARTS.forEach(c => c.resize());
 }
 
 syncAllLabels();
