@@ -1,282 +1,638 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TransRDM - Full Parameter Control</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        input[type="range"] { accent-color: #2563eb; }
-        input[type="number"] { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: 0.8rem; width: 80px; }
-        .card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .slider-group { margin-bottom: 1.25rem; }
-        .section-title { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.25rem; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TransRDM — Simulation Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #e2e0d8;
+    --border-strong: #c8c6bc;
+    --text: #1a1916;
+    --muted: #6b6960;
+    --accent: #1d4e3a;
+    --accent-light: #e1f5ee;
+    --vmt-color: #185FA5;
+    --e-color: #D85A30;
+    --h-color: #854F0B;
+    --slider-h: 3px;
+    --radius: 8px;
+  }
+ 
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141410;
+      --surface: #1e1e1a;
+      --border: #2e2e28;
+      --border-strong: #3e3e36;
+      --text: #eae8e0;
+      --muted: #9a9890;
+      --accent: #5DCAA5;
+      --accent-light: #04342C;
+      --vmt-color: #85B7EB;
+      --e-color: #F0997B;
+      --h-color: #EF9F27;
+    }
+  }
+ 
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+ 
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: var(--surface);
+  }
+  header h1 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-family: 'DM Mono', monospace;
+  }
+  header span {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+ 
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - 61px);
+  }
+ 
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 0;
+  }
+ 
+  .sidebar-section {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+  .sidebar-section-title {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+ 
+  .param-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .param-row:last-child { margin-bottom: 0; }
+ 
+  .param-label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .param-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text);
+    min-width: 48px;
+    text-align: right;
+  }
+ 
+  input[type=range] {
+    width: 100%;
+    height: var(--slider-h);
+    appearance: none;
+    background: var(--border);
+    border-radius: 99px;
+    outline: none;
+    cursor: pointer;
+    margin-top: 4px;
+    grid-column: 1 / -1;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--surface);
+  }
+ 
+  .lcz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+  }
+  .lcz-col-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+ 
+  .main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+  }
+ 
+  .stat-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-card {
+    background: var(--surface);
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .stat-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+ 
+  .charts-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: hidden;
+    background: var(--border);
+    padding: 0;
+  }
+ 
+  .chart-panel {
+    background: var(--bg);
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+  }
+ 
+  .chart-wrap {
+    flex: 1;
+    padding: 16px 24px 8px;
+    display: flex;
+    flex-direction: column;
+  }
+ 
+  .chart-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .chart-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .chart-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .chart-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+ 
+  .canvas-wrap {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+  }
+  .canvas-wrap canvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+ 
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px 10px;
+    cursor: pointer;
+    margin: 12px 20px;
+    transition: all 0.15s;
+    width: calc(100% - 40px);
+    justify-content: center;
+  }
+  .reset-btn:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+ 
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
-
-<div class="flex flex-col lg:flex-row h-screen overflow-hidden">
-    <!-- Control Sidebar -->
-    <aside class="w-full lg:w-[400px] bg-white border-r border-slate-200 p-5 overflow-y-auto shrink-0 shadow-lg z-10">
-        <div class="flex items-center gap-2 mb-6">
-            <div class="bg-blue-600 p-2 rounded-lg text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </div>
-            <h1 class="text-xl font-black tracking-tight">TransRDM <span class="text-blue-600">Engine</span></h1>
+<body>
+ 
+<header>
+  <h1>TransRDM</h1>
+  <span>Urban mobility simulation · 2024 – 2054</span>
+</header>
+ 
+<div class="layout">
+ 
+  <aside class="sidebar">
+ 
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Urban morphology (LCZ)</div>
+      <div class="lcz-grid">
+        <div>
+          <div class="lcz-col-label">Year 0 (start)</div>
+          <div class="param-row"><span class="param-label">a1</span><span class="param-value" id="v_a1_s"></span></div>
+          <input type="range" id="a1_s" min="-2" max="2" step="0.01" value="0.003">
+          <div class="param-row"><span class="param-label">a2</span><span class="param-value" id="v_a2_s"></span></div>
+          <input type="range" id="a2_s" min="-5" max="5" step="0.01" value="0.5">
+          <div class="param-row"><span class="param-label">b1</span><span class="param-value" id="v_b1_s"></span></div>
+          <input type="range" id="b1_s" min="-10" max="10" step="0.1" value="2.0">
         </div>
-
-        <!-- Morphology Controls -->
-        <div class="section-title">Urban Morphology ($a_1, a_2, b_1$)</div>
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="col-span-2 text-[10px] text-slate-500 mb-1">Define the transition from Start (Year 0) to End (Year 30) constants.</div>
-            
-            <div class="space-y-2 p-3 bg-slate-50 rounded-lg">
-                <p class="text-[10px] font-bold text-slate-400">START CONSTANTS</p>
-                <div class="flex justify-between items-center text-xs"><span>a1</span> <input type="number" id="a1_start" step="0.0001" value="0.0840"></div>
-                <div class="flex justify-between items-center text-xs"><span>a2</span> <input type="number" id="a2_start" step="0.001" value="-4.875"></div>
-                <div class="flex justify-between items-center text-xs"><span>b1</span> <input type="number" id="b1_start" step="0.1" value="105.17"></div>
-            </div>
-
-            <div class="space-y-2 p-3 bg-blue-50 rounded-lg">
-                <p class="text-[10px] font-bold text-blue-400">END CONSTANTS</p>
-                <div class="flex justify-between items-center text-xs"><span>a1</span> <input type="number" id="a1_end" step="0.0001" value="0.0505"></div>
-                <div class="flex justify-between items-center text-xs"><span>a2</span> <input type="number" id="a2_end" step="0.001" value="-2.39"></div>
-                <div class="flex justify-between items-center text-xs"><span>b1</span> <input type="number" id="b1_end" step="0.1" value="57.12"></div>
-            </div>
+        <div>
+          <div class="lcz-col-label">Year 30 (end)</div>
+          <div class="param-row"><span class="param-label">a1</span><span class="param-value" id="v_a1_e"></span></div>
+          <input type="range" id="a1_e" min="-2" max="2" step="0.01" value="0.001">
+          <div class="param-row"><span class="param-label">a2</span><span class="param-value" id="v_a2_e"></span></div>
+          <input type="range" id="a2_e" min="-5" max="5" step="0.01" value="0.3">
+          <div class="param-row"><span class="param-label">b1</span><span class="param-value" id="v_b1_e"></span></div>
+          <input type="range" id="b1_e" min="-10" max="10" step="0.1" value="1.0">
         </div>
-
-        <!-- Climate & Env Controls -->
-        <div class="section-title">Climate & Environment</div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>Baseline Temp ($T_{ref}$)</label>
-                <input type="number" id="t_ref" value="25" step="0.5">
-            </div>
+      </div>
+    </div>
+ 
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Climate</div>
+      <div class="param-row"><span class="param-label">Baseline temp (K)</span><span class="param-value" id="v_tbase"></span></div>
+      <input type="range" id="tbase" min="295" max="325" step="0.5" value="311">
+      <div class="param-row"><span class="param-label">Warming rate (°C/yr)</span><span class="param-value" id="v_ccrate"></span></div>
+      <input type="range" id="ccrate" min="0" max="0.2" step="0.001" value="0.05">
+    </div>
+ 
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Population & density</div>
+      <div class="param-row"><span class="param-label">Initial pop (M)</span><span class="param-value" id="v_pop0"></span></div>
+      <input type="range" id="pop0" min="0.1" max="10" step="0.1" value="1.0">
+      <div class="param-row"><span class="param-label">Pop. growth rate</span><span class="param-value" id="v_popgrowth"></span></div>
+      <input type="range" id="popgrowth" min="-0.05" max="0.05" step="0.001" value="0">
+      <div class="param-row"><span class="param-label">Initial density (ppl/km²)</span><span class="param-value" id="v_d0"></span></div>
+      <input type="range" id="d0" min="100" max="10000" step="50" value="1000">
+      <div class="param-row"><span class="param-label">Density change rate</span><span class="param-value" id="v_d"></span></div>
+      <input type="range" id="d" min="-50" max="50" step="1" value="0">
+    </div>
+ 
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Transport</div>
+      <div class="param-row"><span class="param-label">Initial VMT (km/day)</span><span class="param-value" id="v_vmt0"></span></div>
+      <input type="range" id="vmt0" min="1" max="60" step="0.5" value="15">
+      <div class="param-row"><span class="param-label">Initial AMT (km/day)</span><span class="param-value" id="v_amt0"></span></div>
+      <input type="range" id="amt0" min="0" max="30" step="0.5" value="5">
+      <div class="param-row"><span class="param-label">Comfort factor (cf)</span><span class="param-value" id="v_cf"></span></div>
+      <input type="range" id="cf" min="0.5" max="5" step="0.1" value="1.6">
+      <div class="param-row"><span class="param-label">Density sensitivity (λ1)</span><span class="param-value" id="v_lambda1"></span></div>
+      <input type="range" id="lambda1" min="-1" max="1" step="0.01" value="-0.2">
+      <div class="param-row"><span class="param-label">Heat sensitivity (λ2)</span><span class="param-value" id="v_lambda2"></span></div>
+      <input type="range" id="lambda2" min="-1" max="1" step="0.01" value="0">
+    </div>
+ 
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Technology & emissions</div>
+      <div class="param-row"><span class="param-label">EV adoption rate</span><span class="param-value" id="v_egrowth"></span></div>
+      <input type="range" id="egrowth" min="0.01" max="0.5" step="0.005" value="0.15">
+      <div class="param-row"><span class="param-label">Initial EV share</span><span class="param-value" id="v_elec0"></span></div>
+      <input type="range" id="elec0" min="0" max="0.5" step="0.01" value="0.05">
+      <div class="param-row"><span class="param-label">Max EV share</span><span class="param-value" id="v_elecmax"></span></div>
+      <input type="range" id="elecmax" min="0.1" max="1" step="0.01" value="0.9">
+      <div class="param-row"><span class="param-label">ICE emissions (kg/km)</span><span class="param-value" id="v_ef"></span></div>
+      <input type="range" id="ef" min="0.05" max="0.8" step="0.005" value="0.37">
+      <div class="param-row"><span class="param-label">EV grid emissions</span><span class="param-value" id="v_efgrid"></span></div>
+      <input type="range" id="efgrid" min="0.01" max="0.4" step="0.005" value="0.105">
+    </div>
+ 
+    <button class="reset-btn" onclick="resetDefaults()">↺ Reset to defaults</button>
+ 
+  </aside>
+ 
+  <main class="main">
+ 
+    <div class="stat-bar">
+      <div class="stat-card">
+        <div class="stat-label">VMT at year 30</div>
+        <div class="stat-value" id="stat_vmt" style="color: var(--vmt-color)">—</div>
+        <div class="stat-sub">km / person / day</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emissions at year 30</div>
+        <div class="stat-value" id="stat_e" style="color: var(--e-color)">—</div>
+        <div class="stat-sub">total CO₂ (kt)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Heat exposure at year 30</div>
+        <div class="stat-value" id="stat_h" style="color: var(--h-color)">—</div>
+        <div class="stat-sub">person·°C (millions)</div>
+      </div>
+    </div>
+ 
+    <div class="charts-area">
+ 
+      <div class="chart-panel">
+        <div class="chart-wrap">
+          <div class="chart-header">
+            <div class="chart-dot" style="background: var(--vmt-color)"></div>
+            <span class="chart-title">VMT — vehicle miles/km travelled</span>
+            <span class="chart-desc">km / person / day</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="chart_vmt" role="img" aria-label="VMT over 30 years">Vehicle travel distance over simulation period.</canvas>
+          </div>
         </div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>Warming Rate (°C/yr)</label>
-                <span id="ccrate_val" class="font-mono text-blue-600">0.05</span>
-            </div>
-            <input type="range" id="ccrate" min="0" max="0.3" step="0.01" value="0.05" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+      </div>
+ 
+      <div class="chart-panel">
+        <div class="chart-wrap">
+          <div class="chart-header">
+            <div class="chart-dot" style="background: var(--e-color)"></div>
+            <span class="chart-title">E — total emissions</span>
+            <span class="chart-desc">kilotonnes CO₂ / year</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="chart_e" role="img" aria-label="Total emissions over 30 years">Emissions trajectory over simulation period.</canvas>
+          </div>
         </div>
-
-        <!-- Mobility & Energy Controls -->
-        <div class="section-title">Mobility & Technology</div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>EV Adoption Rate ($k_{ev}$)</label>
-                <span id="elec_val" class="font-mono text-blue-600">0.15</span>
-            </div>
-            <input type="range" id="elec" min="0.01" max="0.8" step="0.01" value="0.15" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+      </div>
+ 
+      <div class="chart-panel">
+        <div class="chart-wrap">
+          <div class="chart-header">
+            <div class="chart-dot" style="background: var(--h-color)"></div>
+            <span class="chart-title">H — cumulative heat exposure</span>
+            <span class="chart-desc">millions person·°C</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="chart_h" role="img" aria-label="Heat exposure over 30 years">Heat exposure trajectory over simulation period.</canvas>
+          </div>
         </div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>Emissions / km (ICE)</label>
-                <input type="number" id="em_factor" value="0.37" step="0.01">
-            </div>
-        </div>
-
-        <!-- Socio-Spatial Controls -->
-        <div class="section-title">Socio-Spatial</div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>Initial Density ($d_0$)</label>
-                <span id="d0_val" class="font-mono text-blue-600">1000</span>
-            </div>
-            <input type="range" id="d0" min="100" max="5000" step="100" value="1000" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-        </div>
-        <div class="slider-group">
-            <div class="flex justify-between text-xs mb-1">
-                <label>Density Sensitivity ($\beta$)</label>
-                <input type="number" id="beta" value="0.02" step="0.001">
-            </div>
-        </div>
-    </aside>
-
-    <!-- Visualizer -->
-    <main class="flex-1 overflow-y-auto bg-slate-50 p-6 lg:p-10">
-        <div class="max-w-5xl mx-auto space-y-6">
-            <div class="flex justify-between items-end">
-                <div>
-                    <h2 class="text-3xl font-black text-slate-900 leading-tight">System Dynamics</h2>
-                    <p class="text-slate-500 font-medium italic">Adjusting parameters triggers real-time algebraic re-calculation</p>
-                </div>
-                <div class="text-right hidden md:block">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Projection Window</div>
-                    <div class="text-lg font-mono font-bold text-slate-700">2024 — 2054</div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Temperature -->
-                <div class="card border-l-4 border-l-red-500">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-tighter">Surface Temperature (°C)</h3>
-                        <span id="max_temp" class="text-xl font-mono font-bold text-red-600">0.0°</span>
-                    </div>
-                    <canvas id="tempChart" height="220"></canvas>
-                </div>
-
-                <!-- Emissions -->
-                <div class="card border-l-4 border-l-amber-500">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-tighter">Emissions ($CO_2/km$)</h3>
-                        <span id="min_em" class="text-xl font-mono font-bold text-amber-600">0.0</span>
-                    </div>
-                    <canvas id="emissionsChart" height="220"></canvas>
-                </div>
-
-                <!-- Mobility -->
-                <div class="card border-l-4 border-l-blue-500">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-tighter">Travel Mode Shift (VMT vs AMT)</h3>
-                    </div>
-                    <canvas id="mobilityChart" height="220"></canvas>
-                </div>
-
-                <!-- Exposure -->
-                <div class="card border-l-4 border-l-purple-500">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-tighter">Cumulative Heat Exposure</h3>
-                    </div>
-                    <canvas id="exposureChart" height="220"></canvas>
-                </div>
-            </div>
-            
-            <footer class="pt-8 border-t border-slate-200 flex flex-col gap-2 text-slate-400 text-[11px]">
-                <p>Formula: $\Delta MRT = a_1(T_{ref} + \Delta T_{cc})^2 + a_2(T_{ref} + \Delta T_{cc}) + b_1 - (T_{ref} + \Delta T_{cc})$</p>
-                <p>Emission Logic: $E(t) = VMT(t) \cdot (1 - EV(t)) \cdot EF$</p>
-            </footer>
-        </div>
-    </main>
+      </div>
+ 
+    </div>
+  </main>
 </div>
-
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-    let charts = {};
-
-    function calculate() {
-        const a1_s = parseFloat(document.getElementById('a1_start').value);
-        const a2_s = parseFloat(document.getElementById('a2_start').value);
-        const b1_s = parseFloat(document.getElementById('b1_start').value);
-        const a1_e = parseFloat(document.getElementById('a1_end').value);
-        const a2_e = parseFloat(document.getElementById('a2_end').value);
-        const b1_e = parseFloat(document.getElementById('b1_end').value);
-        
-        const t_ref = parseFloat(document.getElementById('t_ref').value);
-        const ccrate = parseFloat(document.getElementById('ccrate').value);
-        const elec_speed = parseFloat(document.getElementById('elec').value);
-        const em_factor = parseFloat(document.getElementById('em_factor').value);
-        const d0 = parseFloat(document.getElementById('d0').value);
-        const beta = parseFloat(document.getElementById('beta').value);
-
-        // Update UI labels
-        document.getElementById('ccrate_val').innerText = ccrate.toFixed(2);
-        document.getElementById('elec_val').innerText = elec_speed.toFixed(2);
-        document.getElementById('d0_val').innerText = d0;
-
-        const results = { years: [], temp: [], emissions: [], vmt: [], amt: [], exposure: [] };
-
-        for (let t = 0; t <= 30; t++) {
-            const p = t / 30; // Progression of transition
-            const a1 = a1_s + (a1_e - a1_s) * p;
-            const a2 = a2_s + (a2_e - a2_s) * p;
-            const b1 = b1_s + (b1_e - b1_s) * p;
-
-            const tcc = ccrate * t;
-            const x = t_ref + tcc; 
-            const deltamrt = a1 * (x**2) + a2 * x + b1 - x;
-            const final_temp = t_ref + deltamrt + tcc;
-
-            // EV Sigmoid
-            const ev = 0.95 / (1 + (0.95/0.05 - 1) * Math.exp(-elec_speed * t));
-            
-            // Interaction logic (simplified algebraic dependency)
-            const vmt = Math.max(0, (25 - (final_temp * 0.1) - (p * 8)) * (d0/1000));
-            const amt = Math.max(0, 5 + (final_temp * 0.08) + (p * 10));
-
-            results.years.push(t);
-            results.temp.push(final_temp.toFixed(2));
-            results.emissions.push((vmt * (1 - ev) * em_factor).toFixed(3));
-            results.vmt.push(vmt.toFixed(1));
-            results.amt.push(amt.toFixed(1));
-            results.exposure.push((amt * final_temp * (1 + beta)).toFixed(0));
+const DEFAULTS = {
+  a1_s: 0.003, a2_s: 0.5, b1_s: 2.0,
+  a1_e: 0.001, a2_e: 0.3, b1_e: 1.0,
+  ccrate: 0.05, tbase: 311.0,
+  d0: 1000, d: 0,
+  lambda1: -0.2, lambda2: 0,
+  ef: 0.37, efgrid: 0.105,
+  egrowth: 0.15, elec0: 0.05, elecmax: 0.9,
+  vmt0: 15.0, amt0: 5.0,
+  pop0: 1.0, popgrowth: 0,
+  cf: 1.6
+};
+ 
+const PARAMS = Object.keys(DEFAULTS);
+const N = 301;
+const T_MAX = 30;
+const T = Array.from({length: N}, (_, i) => i * T_MAX / (N - 1));
+const YEARS = T.map(t => Math.round(2024 + t));
+ 
+function getVals() {
+  const v = {};
+  PARAMS.forEach(k => { v[k] = parseFloat(document.getElementById(k).value); });
+  return v;
+}
+ 
+function simulate(v) {
+  const { a1_s, a2_s, b1_s, a1_e, a2_e, b1_e,
+          ccrate, tbase, d0, d: d_rate,
+          lambda1, lambda2, ef, efgrid, egrowth,
+          elec0, elecmax, vmt0, amt0, pop0, popgrowth, cf } = v;
+ 
+  const vmt = [], e = [], h = [];
+ 
+  for (let i = 0; i < N; i++) {
+    const t = T[i];
+    const frac = T_MAX > 0 ? t / T_MAX : 0;
+ 
+    const a1 = a1_s + (a1_e - a1_s) * frac;
+    const a2 = a2_s + (a2_e - a2_s) * frac;
+    const b1 = b1_s + (b1_e - b1_s) * frac;
+ 
+    const dens = d0 + d_rate * t;
+    const tcc = ccrate * t;
+    const tb_total = tbase + tcc;
+ 
+    const elec = elecmax / (1 + (elecmax / elec0 - 1) * Math.exp(-egrowth * t));
+    const pop = pop0 * Math.exp(popgrowth * t);
+ 
+    const x = tb_total - 273.15;
+    const deltamrt = a1 * x * x + a2 * x + b1 - x;
+    const deltat = deltamrt + tcc;
+    const temp = tbase + deltat;
+ 
+    const dt0_x = (tbase - 273.15);
+    const deltamrt0 = a1_s * dt0_x * dt0_x + a2_s * dt0_x + b1_s - dt0_x;
+    const deltat0 = Math.max(0.001, deltamrt0);
+ 
+    const tmtmax = vmt0 + amt0 * cf;
+    const a3 = vmt0 / (Math.pow(d0, lambda1) * Math.pow(deltat0, lambda2 !== 0 ? lambda2 : 1));
+    const dt_safe = Math.max(0.001, deltat);
+    const vmt_base = a3 * Math.pow(Math.max(1, dens), lambda1) * (lambda2 !== 0 ? Math.pow(dt_safe, lambda2) : 1);
+    const vmt_val = Math.min(vmt_base, tmtmax);
+    const amt_val = Math.max(0, (tmtmax - vmt_val) / cf);
+ 
+    const e_val = pop * ((1 - elec) * vmt_val * ef + elec * vmt_val * efgrid);
+    const h_val = pop * amt_val * temp;
+ 
+    vmt.push(vmt_val);
+    e.push(e_val);
+    h.push(h_val);
+  }
+ 
+  return { vmt, e, h };
+}
+ 
+const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+ 
+const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+const tickColor = isDark ? '#9a9890' : '#6b6960';
+ 
+function makeChart(id, color, data) {
+  return new Chart(document.getElementById(id), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data,
+        borderColor: color,
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0.2,
+        fill: {
+          target: 'origin',
+          above: color + (isDark ? '22' : '18')
         }
-
-        document.getElementById('max_temp').innerText = Math.max(...results.temp) + "°";
-        document.getElementById('min_em').innerText = Math.min(...results.emissions.slice(5));
-
-        return results;
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 150 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: ctx => ' ' + ctx.parsed.y.toFixed(3)
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: tickColor,
+            font: { family: 'DM Mono', size: 10 },
+            maxTicksLimit: 7,
+            autoSkip: true
+          },
+          grid: { color: gridColor },
+          border: { color: gridColor }
+        },
+        y: {
+          ticks: {
+            color: tickColor,
+            font: { family: 'DM Mono', size: 10 },
+            maxTicksLimit: 4,
+            callback: v => v.toFixed(2)
+          },
+          grid: { color: gridColor },
+          border: { color: gridColor }
+        }
+      }
     }
-
-    function updateCharts() {
-        const data = calculate();
-        
-        charts.temp.data.labels = data.years;
-        charts.temp.data.datasets[0].data = data.temp;
-        charts.temp.update('none');
-
-        charts.emissions.data.labels = data.years;
-        charts.emissions.data.datasets[0].data = data.emissions;
-        charts.emissions.update('none');
-
-        charts.mobility.data.labels = data.years;
-        charts.mobility.data.datasets[0].data = data.vmt;
-        charts.mobility.data.datasets[1].data = data.amt;
-        charts.mobility.update('none');
-
-        charts.exposure.data.labels = data.years;
-        charts.exposure.data.datasets[0].data = data.exposure;
-        charts.exposure.update('none');
-    }
-
-    function init() {
-        Chart.defaults.font.family = "'JetBrains Mono', monospace";
-        Chart.defaults.font.size = 10;
-        Chart.defaults.color = '#94a3b8';
-
-        const ctxTemp = document.getElementById('tempChart').getContext('2d');
-        charts.temp = new Chart(ctxTemp, {
-            type: 'line',
-            data: { datasets: [{ label: 'Temp °C', borderColor: '#ef4444', borderWidth: 3, pointRadius: 2, fill: false, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-
-        const ctxEm = document.getElementById('emissionsChart').getContext('2d');
-        charts.emissions = new Chart(ctxEm, {
-            type: 'line',
-            data: { datasets: [{ label: 'Emissions', borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, borderWidth: 2, pointRadius: 0, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-
-        const ctxMob = document.getElementById('mobilityChart').getContext('2d');
-        charts.mobility = new Chart(ctxMob, {
-            type: 'line',
-            data: { datasets: [
-                { label: 'VMT (Car)', borderColor: '#3b82f6', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.3 },
-                { label: 'AMT (Active)', borderColor: '#10b981', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.3 }
-            ]},
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-
-        const ctxExp = document.getElementById('exposureChart').getContext('2d');
-        charts.exposure = new Chart(ctxExp, {
-            type: 'bar',
-            data: { datasets: [{ label: 'Exposure Index', backgroundColor: '#a855f7', borderRadius: 4 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-
-        updateCharts();
-
-        // Attach listeners to everything
-        document.querySelectorAll('input').forEach(el => {
-            el.addEventListener('input', updateCharts);
-        });
-    }
-
-    window.onload = init;
+  });
+}
+ 
+let sim = simulate(DEFAULTS);
+const chartVMT = makeChart('chart_vmt', isDark ? '#85B7EB' : '#185FA5', sim.vmt);
+const chartE   = makeChart('chart_e',   isDark ? '#F0997B' : '#D85A30', sim.e);
+const chartH   = makeChart('chart_h',   isDark ? '#EF9F27' : '#854F0B', sim.h);
+ 
+function updateStats(sim) {
+  const last = N - 1;
+  document.getElementById('stat_vmt').textContent = sim.vmt[last].toFixed(2);
+  document.getElementById('stat_e').textContent   = (sim.e[last] / 1000).toFixed(1);
+  document.getElementById('stat_h').textContent   = (sim.h[last] / 1e6).toFixed(2);
+}
+ 
+function updateCharts() {
+  const v = getVals();
+  const s = simulate(v);
+  chartVMT.data.datasets[0].data = s.vmt;
+  chartE.data.datasets[0].data   = s.e;
+  chartH.data.datasets[0].data   = s.h;
+  chartVMT.update('none');
+  chartE.update('none');
+  chartH.update('none');
+  updateStats(s);
+}
+ 
+function syncLabels() {
+  PARAMS.forEach(k => {
+    const el = document.getElementById('v_' + k);
+    if (!el) return;
+    const val = parseFloat(document.getElementById(k).value);
+    el.textContent = (Number.isInteger(val) || Math.abs(val) >= 10) ? val.toFixed(0) : val.toFixed(3);
+  });
+}
+ 
+function resetDefaults() {
+  PARAMS.forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.value = DEFAULTS[k];
+  });
+  syncLabels();
+  updateCharts();
+}
+ 
+PARAMS.forEach(k => {
+  const el = document.getElementById(k);
+  if (!el) return;
+  el.addEventListener('input', () => { syncLabels(); updateCharts(); });
+});
+ 
+syncLabels();
+updateStats(sim);
 </script>
-
+ 
 </body>
 </html>
