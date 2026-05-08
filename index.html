@@ -660,13 +660,12 @@ function simulate(v) {
     const x    = (tbase + tcc) - 273.15;
  
     const deltamrt = a1 * x * x + a2 * x + b1 - x;
-    const deltat   = deltamrt + tcc;
     const temp     = tbase + deltat;
  
     const elec = elecmax / (1 + (elecmax / elec0 - 1) * Math.exp(-egrowth * t));
     const pop  = pop0 * Math.exp(popgrowth * t);
  
-    const dt_safe  = Math.max(0.001, deltat);
+    const dt_safe  = Math.max(0.001, deltamrt);
     const vmt_base = a3 * Math.pow(Math.max(1, dens), lambda1) * (lambda2 !== 0 ? Math.pow(dt_safe, lambda2) : 1);
     const vmt_val  = Math.min(vmt_base, tmtmax);
     const amt_val  = Math.max(0, (tmtmax - vmt_val) / cf);
