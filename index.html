@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
   :root {
     /* RIL dark palette */
     --bg:            #0f0c0d;
@@ -21,7 +21,7 @@
     --accent:        #8c1f3f;   /* ASU maroon */
     --accent-light:  #b5254f;
     --accent-glow:   rgba(140,31,63,0.18);
-
+ 
     /* chart colors — warm desert palette */
     --vmt-color:  #c07a3a;   /* sandstone orange */
     --amt-color:  #7a9e6e;   /* saguaro green */
@@ -31,11 +31,11 @@
     --elec-color: #5a8fa0;   /* sky/water blue */
     --pop-color:  #8a8078;   /* muted */
     --dens-color: #9a7a5a;   /* adobe */
-
+ 
     --radius: 6px;
     --slider-h: 3px;
   }
-
+ 
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
@@ -44,7 +44,7 @@
     line-height: 1.5;
     min-height: 100vh;
   }
-
+ 
   /* ── Header ── */
   header {
     background: var(--surface);
@@ -86,14 +86,14 @@
     padding: 3px 8px;
     font-weight: 500;
   }
-
+ 
   /* ── Layout ── */
   .layout {
     display: grid;
     grid-template-columns: 290px 1fr;
     height: calc(100vh - 69px);
   }
-
+ 
   /* ── Sidebar ── */
   .sidebar {
     background: var(--surface);
@@ -112,7 +112,7 @@
     margin-bottom: 12px;
     font-weight: 500;
   }
-
+ 
   .param-block { margin-bottom: 13px; }
   .param-block:last-child { margin-bottom: 0; }
   .param-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
@@ -126,7 +126,7 @@
     flex-shrink: 0;
     margin-left: 6px;
   }
-
+ 
   input[type=range] {
     width: 100%; height: var(--slider-h); appearance: none;
     background: var(--border); border-radius: 99px;
@@ -141,7 +141,7 @@
     width: 13px; height: 13px; border-radius: 50%;
     background: var(--accent-light); cursor: pointer; border: 2px solid var(--surface);
   }
-
+ 
   /* LCZ */
   .lcz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
   .lcz-col { display: flex; flex-direction: column; gap: 6px; }
@@ -160,7 +160,7 @@
     font-family: 'DM Mono', monospace; font-size: 10px;
     color: var(--muted); line-height: 1.8; margin-top: 2px;
   }
-
+ 
   .reset-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-size: 11px; font-family: 'DM Sans', sans-serif; color: var(--muted);
@@ -169,10 +169,10 @@
     transition: all 0.15s;
   }
   .reset-btn:hover { border-color: var(--accent); color: var(--accent-light); }
-
+ 
   /* ── Main ── */
   .main { display: flex; flex-direction: column; overflow: hidden; }
-
+ 
   /* Stat bar */
   .stat-bar {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -186,7 +186,7 @@
   .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
   .stat-value { font-family: 'DM Mono', monospace; font-size: 19px; font-weight: 500; }
   .stat-sub { font-size: 10px; color: var(--muted); }
-
+ 
   /* Charts scrollable area — all groups always visible */
   /* Section divider between groups */
   .chart-group-header {
@@ -199,7 +199,7 @@
     flex-shrink: 0; position: sticky; top: 0; z-index: 2;
   }
   .chart-group-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-
+ 
   /* Three-column grid inside each group */
   .chart-grid {
     display: grid;
@@ -214,7 +214,7 @@
     display: flex;
     min-height: 0;
   }
-
+ 
   /* Each group takes equal vertical share of the scrollable area */
   .charts-area {
     flex: 1;
@@ -239,14 +239,14 @@
   .chart-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
   .canvas-wrap { flex: 1; position: relative; min-height: 0; }
   .canvas-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
-
+ 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; opacity: 0.5; }
 </style>
 </head>
 <body>
-
+ 
 <header>
   <img src="RIL_Logo.png" alt="Resilient Infrastructure Lab logo" class="header-logo">
   <div class="header-text">
@@ -254,11 +254,21 @@
     <div class="header-sub">Resilient Infrastructure Lab · Arizona State University</div>
   </div>
   <div class="header-badge">2026 – 2050</div>
+  <button id="btn_lock" onclick="lockScenario()" style="
+    font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:500;
+    color:var(--muted); background:none; border:1px solid var(--border);
+    border-radius:var(--radius); padding:4px 10px; cursor:pointer; transition:all 0.15s;
+    font-family:'DM Sans',sans-serif;">⬡ Lock scenario</button>
+  <button id="btn_clear" onclick="clearLock()" style="
+    display:none; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:500;
+    color:var(--muted); background:none; border:1px solid var(--border);
+    border-radius:var(--radius); padding:4px 10px; cursor:pointer; transition:all 0.15s;
+    font-family:'DM Sans',sans-serif;">✕ Clear lock</button>
 </header>
-
+ 
 <div class="layout">
 <aside class="sidebar">
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-section-title">Urban Morphology (LCZ)</div>
     <div class="lcz-grid">
@@ -288,7 +298,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-section-title">Climate</div>
     <div class="param-block">
@@ -306,7 +316,7 @@
       <input type="range" id="ccrate" min="0" max="0.2" step="0.001" value="0.05" oninput="syncLabel('ccrate');updateCharts()">
     </div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-section-title">Population &amp; Density</div>
     <div class="param-block">
@@ -338,7 +348,7 @@
       <input type="range" id="d" min="-200" max="200" step="5" value="0" oninput="syncLabel('d');updateCharts()">
     </div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-section-title">Transport</div>
     <div class="param-block">
@@ -377,7 +387,7 @@
       <input type="range" id="lambda2" min="-1" max="1" step="0.01" value="0" oninput="syncLabel('lambda2');updateCharts()">
     </div>
   </div>
-
+ 
   <div class="sidebar-section">
     <div class="sidebar-section-title">Technology &amp; Emissions</div>
     <div class="param-block">
@@ -416,13 +426,13 @@
       <input type="range" id="efgrid" min="0.01" max="0.4" step="0.005" value="0.105" oninput="syncLabel('efgrid');updateCharts()">
     </div>
   </div>
-
+ 
   <button class="reset-btn" onclick="resetDefaults()">↺ Reset to defaults</button>
-
+ 
 </aside>
-
+ 
 <main class="main">
-
+ 
   <div class="stat-bar">
     <div class="stat-card">
       <div class="stat-label">VMT at 2050</div>
@@ -445,9 +455,9 @@
       <div class="stat-sub">mi·K / day</div>
     </div>
   </div>
-
+ 
   <div class="charts-area">
-
+ 
     <!-- MOBILITY -->
     <div class="chart-group">
       <div class="chart-group-header">
@@ -514,7 +524,7 @@
       </div>
       </div>
     </div>
-
+ 
     <!-- CONTEXT -->
     <div class="chart-group">
       <div class="chart-group-header">
@@ -553,32 +563,38 @@
       </div>
       </div>
     </div>
-
+ 
   </div>
 </main>
 </div>
-
+ 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+// ── LCZ profiles & descriptions ───────────────────────────────
 const LCZ_PROFILES = {
-  LCZ1: { a1: 0.0505, a2: -2.390, b1:  57.121 },
-  LCZ2: { a1: 0.0346, a2: -1.288, b1:  40.750 },
-  LCZ3: { a1: 0.0840, a2: -4.875, b1: 105.170 },
-  LCZ4: { a1: 0.0434, a2: -1.839, b1:  48.450 },
-  LCZ5: { a1: 0.0480, a2: -1.886, b1:  47.260 },
-  LCZ6: { a1: 0.0500, a2: -1.990, b1:  48.930 },
+  LCZ1: { a1: 0.0505, a2: -2.390, b1:  57.121, label: 'Compact high-rise',    desc: 'Dense mix of tall buildings, heavy paving, minimal vegetation.' },
+  LCZ2: { a1: 0.0346, a2: -1.288, b1:  40.750, label: 'Compact midrise',      desc: 'Dense mix of mid-height buildings, few trees, mostly paved surfaces.' },
+  LCZ3: { a1: 0.0840, a2: -4.875, b1: 105.170, label: 'Compact low-rise',     desc: 'Dense mix of low buildings, heavily paved, very little vegetation.' },
+  LCZ4: { a1: 0.0434, a2: -1.839, b1:  48.450, label: 'Open high-rise',       desc: 'Tall buildings with open arrangement, permeable surfaces, some trees.' },
+  LCZ5: { a1: 0.0480, a2: -1.886, b1:  47.260, label: 'Open midrise',         desc: 'Mid-height buildings in open arrangement, mixed surfaces and vegetation.' },
+  LCZ6: { a1: 0.0500, a2: -1.990, b1:  48.930, label: 'Open low-rise',        desc: 'Low buildings with open layout, gardens, significant vegetation cover.' },
 };
-
+ 
 function lczParamText(key) {
   const p = LCZ_PROFILES[key];
-  return `a\u2081 = ${p.a1}\na\u2082 = ${p.a2}\nb\u2081 = ${p.b1}`;
+  return `a\u2081\u202f=\u202f${p.a1}\u2002a\u2082\u202f=\u202f${p.a2}\u2002b\u2081\u202f=\u202f${p.b1}`;
+}
+function lczFullText(key) {
+  const p = LCZ_PROFILES[key];
+  return `${p.label}\n${p.desc}\na\u2081\u202f=\u202f${p.a1}\u2002a\u2082\u202f=\u202f${p.a2}\u2002b\u2081\u202f=\u202f${p.b1}`;
 }
 function onLCZChange() {
-  document.getElementById('lcz_start_params').textContent = lczParamText(document.getElementById('lcz_start').value);
-  document.getElementById('lcz_end_params').textContent   = lczParamText(document.getElementById('lcz_end').value);
+  document.getElementById('lcz_start_params').textContent = lczFullText(document.getElementById('lcz_start').value);
+  document.getElementById('lcz_end_params').textContent   = lczFullText(document.getElementById('lcz_end').value);
   updateCharts();
 }
-
+ 
+// ── Defaults ──────────────────────────────────────────────────
 const DEFAULTS = {
   tbase: 311.0, ccrate: 0.05,
   pop0: 1, popgrowth: 0,
@@ -589,106 +605,210 @@ const DEFAULTS = {
   ef: 0.37, efgrid: 0.105,
 };
 const SLIDER_IDS = Object.keys(DEFAULTS);
-
+ 
 const N = 251;
 const T_MAX = 24;
 const T     = Array.from({ length: N }, (_, i) => i * T_MAX / (N - 1));
 const YEARS = T.map(t => Math.round(2026 + t));
-
+ 
+// ── Y-axis ranges (locked) ────────────────────────────────────
+// Keyed by chart id; set to null to auto-scale
+const Y_RANGES = {
+  chart_vmt:  { min: 0, max: 30  },
+  chart_amt:  { min: 0, max: 20  },
+  chart_e:    { min: 0, max: 10  },
+  chart_h:    { min: 0, max: 5000 },
+  chart_temp: { min: 305, max: 345 },
+  chart_elec: { min: 0, max: 1   },
+  chart_pop:  { min: 0, max: 100 },
+  chart_dens: { min: 0, max: 25000 },
+};
+ 
+// ── Simulation ────────────────────────────────────────────────
 function getVals() {
   const v = {};
   SLIDER_IDS.forEach(k => { v[k] = parseFloat(document.getElementById(k).value); });
   return v;
 }
-
+ 
 function simulate(v) {
   const { tbase, ccrate, pop0, popgrowth, d0, d: d_rate,
           vmt0, amt0, cf, lambda1, lambda2,
           egrowth, elec0, elecmax, ef, efgrid } = v;
-
+ 
   const lczS = LCZ_PROFILES[document.getElementById('lcz_start').value];
   const lczE = LCZ_PROFILES[document.getElementById('lcz_end').value];
-
+ 
   const x0    = tbase - 273.15;
   const dmrt0 = lczS.a1 * x0 * x0 + lczS.a2 * x0 + lczS.b1 - x0;
   const dt0   = Math.max(0.001, dmrt0);
   const tmtmax = vmt0 + amt0 * cf;
   const a3 = vmt0 / (Math.pow(Math.max(1, d0), lambda1) * (lambda2 !== 0 ? Math.pow(dt0, lambda2) : 1));
-
+ 
   const vmt_a=[], amt_a=[], e_a=[], h_a=[], temp_a=[], elec_a=[], pop_a=[], dens_a=[];
-
+ 
   for (let i = 0; i < N; i++) {
     const t    = T[i];
     const frac = T_MAX > 0 ? t / T_MAX : 0;
-
+ 
     const a1 = lczS.a1 + (lczE.a1 - lczS.a1) * frac;
     const a2 = lczS.a2 + (lczE.a2 - lczS.a2) * frac;
     const b1 = lczS.b1 + (lczE.b1 - lczS.b1) * frac;
-
+ 
     const dens = d0 + d_rate * t;
     const tcc  = ccrate * t;
     const x    = (tbase + tcc) - 273.15;
-
+ 
     const deltamrt = a1 * x * x + a2 * x + b1 - x;
     const deltat   = deltamrt + tcc;
     const temp     = tbase + deltat;
-
+ 
     const elec = elecmax / (1 + (elecmax / elec0 - 1) * Math.exp(-egrowth * t));
     const pop  = pop0 * Math.exp(popgrowth * t);
-
+ 
     const dt_safe  = Math.max(0.001, deltat);
     const vmt_base = a3 * Math.pow(Math.max(1, dens), lambda1) * (lambda2 !== 0 ? Math.pow(dt_safe, lambda2) : 1);
     const vmt_val  = Math.min(vmt_base, tmtmax);
     const amt_val  = Math.max(0, (tmtmax - vmt_val) / cf);
-
+ 
     const e_val = pop * ((1 - elec) * vmt_val * ef + elec * vmt_val * efgrid);
     const h_val = pop * amt_val * temp;
-
+ 
     vmt_a.push(vmt_val); amt_a.push(amt_val);
     e_a.push(e_val);     h_a.push(h_val);
     temp_a.push(temp);   elec_a.push(elec);
     pop_a.push(pop);     dens_a.push(dens);
   }
-
+ 
   return { vmt: vmt_a, amt: amt_a, e: e_a, h: h_a, temp: temp_a, elec: elec_a, pop: pop_a, dens: dens_a };
 }
-
+ 
+// ── Synchronized crosshair plugin ────────────────────────────
+const syncCrosshairPlugin = {
+  id: 'syncCrosshair',
+  afterEvent(chart, args) {
+    if (args.event.type !== 'mousemove' && args.event.type !== 'mouseout') return;
+    if (args.event.type === 'mouseout') {
+      ALL_CHARTS.forEach(c => { if (c !== chart) { c.tooltip.setActiveElements([], {}); c.update('none'); } });
+      return;
+    }
+    const points = chart.getElementsAtEventForMode(args.event.native, 'index', { intersect: false }, true);
+    if (!points.length) return;
+    const idx = points[0].index;
+    ALL_CHARTS.forEach(c => {
+      if (c === chart) return;
+      const active = c.data.datasets.map((_, di) => ({ datasetIndex: di, index: idx }));
+      c.tooltip.setActiveElements(active, { x: 0, y: 0 });
+      c.update('none');
+    });
+  }
+};
+Chart.register(syncCrosshairPlugin);
+ 
+// ── Chart factory ─────────────────────────────────────────────
 const gridColor = 'rgba(255,255,255,0.05)';
 const tickColor = '#5a5048';
-
-function makeChart(id, color, data) {
+ 
+// Scenario A colors (current), Scenario B colors (locked — lighter/dashed)
+const COLORS_A = {
+  chart_vmt: '#c07a3a', chart_amt: '#7a9e6e', chart_e: '#b5254f',
+  chart_h: '#d4833a',  chart_temp: '#c04a35', chart_elec: '#5a8fa0',
+  chart_pop: '#8a8078', chart_dens: '#9a7a5a',
+};
+const COLORS_B = {
+  chart_vmt: '#e0b888', chart_amt: '#aecba4', chart_e: '#e0728f',
+  chart_h: '#eaaf78',  chart_temp: '#e08070', chart_elec: '#90bfcc',
+  chart_pop: '#b8b0a8', chart_dens: '#c4a882',
+};
+ 
+function makeChart(id, data) {
+  const range = Y_RANGES[id];
+  const colorA = COLORS_A[id];
   return new Chart(document.getElementById(id), {
     type: 'line',
-    data: { labels: YEARS, datasets: [{ data, borderColor: color, borderWidth: 1.5,
-            pointRadius: 0, tension: 0.2,
-            fill: { target: 'origin', above: color + '28' } }] },
+    data: {
+      labels: YEARS,
+      datasets: [
+        // Dataset 0 — current scenario (A)
+        { data, borderColor: colorA, borderWidth: 1.5, pointRadius: 0, tension: 0.2,
+          fill: { target: 'origin', above: colorA + '28' }, label: 'Current' },
+        // Dataset 1 — locked scenario (B), hidden until locked
+        { data: [], borderColor: COLORS_B[id], borderWidth: 1.5, borderDash: [4, 3],
+          pointRadius: 0, tension: 0.2, fill: false, label: 'Locked', hidden: true },
+      ]
+    },
     options: {
       responsive: true, maintainAspectRatio: false, animation: { duration: 120 },
-      plugins: { legend: { display: false },
-        tooltip: { mode: 'index', intersect: false,
-          callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(3) } } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          mode: 'index', intersect: false,
+          callbacks: {
+            label: ctx => {
+              const tag = ctx.datasetIndex === 0 ? ' Current' : ' Locked';
+              return tag + ': ' + ctx.parsed.y.toFixed(3);
+            }
+          }
+        }
+      },
       scales: {
         x: { ticks: { color: tickColor, font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 7 },
              grid: { color: gridColor }, border: { color: gridColor } },
-        y: { ticks: { color: tickColor, font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 4,
-                      callback: v => v.toFixed(2) },
-             grid: { color: gridColor }, border: { color: gridColor } }
+        y: {
+          min: range ? range.min : undefined,
+          max: range ? range.max : undefined,
+          ticks: { color: tickColor, font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 4,
+                   callback: v => v.toFixed(2) },
+          grid: { color: gridColor }, border: { color: gridColor }
+        }
       }
     }
   });
 }
-
+ 
+// ── Init ──────────────────────────────────────────────────────
 let sim = simulate(DEFAULTS);
-const chartVMT  = makeChart('chart_vmt',  '#c07a3a', sim.vmt);
-const chartAMT  = makeChart('chart_amt',  '#7a9e6e', sim.amt);
-const chartE    = makeChart('chart_e',    '#b5254f', sim.e);
-const chartH    = makeChart('chart_h',    '#d4833a', sim.h);
-const chartTemp = makeChart('chart_temp', '#c04a35', sim.temp);
-const chartElec = makeChart('chart_elec', '#5a8fa0', sim.elec);
-const chartPop  = makeChart('chart_pop',  '#8a8078', sim.pop);
-const chartDens = makeChart('chart_dens', '#9a7a5a', sim.dens);
+const chartVMT  = makeChart('chart_vmt',  sim.vmt);
+const chartAMT  = makeChart('chart_amt',  sim.amt);
+const chartE    = makeChart('chart_e',    sim.e);
+const chartH    = makeChart('chart_h',    sim.h);
+const chartTemp = makeChart('chart_temp', sim.temp);
+const chartElec = makeChart('chart_elec', sim.elec);
+const chartPop  = makeChart('chart_pop',  sim.pop);
+const chartDens = makeChart('chart_dens', sim.dens);
 const ALL_CHARTS = [chartVMT, chartAMT, chartE, chartH, chartTemp, chartElec, chartPop, chartDens];
-
+const CHART_KEYS = ['vmt','amt','e','h','temp','elec','pop','dens'];
+ 
+let lockedSim = null;
+ 
+// ── Scenario lock ─────────────────────────────────────────────
+function lockScenario() {
+  lockedSim = simulate(getVals());
+  const btn = document.getElementById('btn_lock');
+  btn.textContent = '⬡ Update locked';
+  btn.style.borderColor = 'var(--accent-light)';
+  btn.style.color = 'var(--accent-light)';
+  document.getElementById('btn_clear').style.display = 'inline-flex';
+ 
+  ALL_CHARTS.forEach((c, i) => {
+    const key = CHART_KEYS[i];
+    c.data.datasets[1].data   = lockedSim[key];
+    c.data.datasets[1].hidden = false;
+    c.update('none');
+  });
+}
+ 
+function clearLock() {
+  lockedSim = null;
+  const btn = document.getElementById('btn_lock');
+  btn.textContent = '⬡ Lock scenario';
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  document.getElementById('btn_clear').style.display = 'none';
+  ALL_CHARTS.forEach(c => { c.data.datasets[1].data = []; c.data.datasets[1].hidden = true; c.update('none'); });
+}
+ 
+// ── Update ────────────────────────────────────────────────────
 function updateStats(s) {
   const last = N - 1;
   document.getElementById('stat_vmt').textContent = s.vmt[last].toFixed(2);
@@ -696,21 +816,17 @@ function updateStats(s) {
   document.getElementById('stat_e').textContent   = s.e[last].toFixed(1);
   document.getElementById('stat_h').textContent   = s.h[last].toFixed(0);
 }
-
+ 
 function updateCharts() {
   const s = simulate(getVals());
-  chartVMT.data.datasets[0].data  = s.vmt;
-  chartAMT.data.datasets[0].data  = s.amt;
-  chartE.data.datasets[0].data    = s.e;
-  chartH.data.datasets[0].data    = s.h;
-  chartTemp.data.datasets[0].data = s.temp;
-  chartElec.data.datasets[0].data = s.elec;
-  chartPop.data.datasets[0].data  = s.pop;
-  chartDens.data.datasets[0].data = s.dens;
-  ALL_CHARTS.forEach(c => c.update('none'));
+  ALL_CHARTS.forEach((c, i) => {
+    c.data.datasets[0].data = s[CHART_KEYS[i]];
+    c.update('none');
+  });
   updateStats(s);
 }
-
+ 
+// ── Labels ────────────────────────────────────────────────────
 function syncLabel(k) {
   const el = document.getElementById('v_' + k);
   if (!el) return;
@@ -718,17 +834,21 @@ function syncLabel(k) {
   el.textContent = Math.abs(val) >= 10 ? val.toFixed(0) : val.toFixed(3);
 }
 function syncAllLabels() { SLIDER_IDS.forEach(k => syncLabel(k)); }
-
+ 
+// ── Reset ─────────────────────────────────────────────────────
 function resetDefaults() {
   SLIDER_IDS.forEach(k => { document.getElementById(k).value = DEFAULTS[k]; });
   document.getElementById('lcz_start').value = 'LCZ4';
   document.getElementById('lcz_end').value   = 'LCZ5';
+  clearLock();
   syncAllLabels();
   onLCZChange();
 }
-
+ 
+// ── Boot ──────────────────────────────────────────────────────
 syncAllLabels();
 onLCZChange();
 </script>
+ 
 </body>
 </html>
