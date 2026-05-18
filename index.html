@@ -661,7 +661,7 @@ function simulate(v) {
  
     const deltamrt = a1 * x * x + a2 * x + b1 - x;
     const deltat   = deltamrt;
-    const temp     = x + deltat;
+    const temp     = tbase + tcc + deltat;
  
     const elec = elecmax / (1 + (elecmax / elec0 - 1) * Math.exp(-egrowth * t));
     const pop  = pop0 * Math.exp(popgrowth * t);
