@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   :root {
     /* RIL dark palette */
     --bg:            #0f0c0d;
@@ -21,7 +21,7 @@
     --accent:        #8c1f3f;   /* ASU maroon */
     --accent-light:  #b5254f;
     --accent-glow:   rgba(140,31,63,0.18);
- 
+
     /* chart colors — warm desert palette */
     --vmt-color:  #c07a3a;   /* sandstone orange */
     --amt-color:  #7a9e6e;   /* saguaro green */
@@ -31,11 +31,11 @@
     --elec-color: #5a8fa0;   /* sky/water blue */
     --pop-color:  #8a8078;   /* muted */
     --dens-color: #9a7a5a;   /* adobe */
- 
+
     --radius: 6px;
     --slider-h: 3px;
   }
- 
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
@@ -44,7 +44,7 @@
     line-height: 1.5;
     min-height: 100vh;
   }
- 
+
   /* ── Header ── */
   header {
     background: var(--surface);
@@ -86,14 +86,14 @@
     padding: 3px 8px;
     font-weight: 500;
   }
- 
+
   /* ── Layout ── */
   .layout {
     display: grid;
     grid-template-columns: 290px 1fr;
     height: calc(100vh - 69px);
   }
- 
+
   /* ── Sidebar ── */
   .sidebar {
     background: var(--surface);
@@ -112,7 +112,7 @@
     margin-bottom: 12px;
     font-weight: 500;
   }
- 
+
   .param-block { margin-bottom: 13px; }
   .param-block:last-child { margin-bottom: 0; }
   .param-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
@@ -126,7 +126,7 @@
     flex-shrink: 0;
     margin-left: 6px;
   }
- 
+
   input[type=range] {
     width: 100%; height: var(--slider-h); appearance: none;
     background: var(--border); border-radius: 99px;
@@ -141,7 +141,7 @@
     width: 13px; height: 13px; border-radius: 50%;
     background: var(--accent-light); cursor: pointer; border: 2px solid var(--surface);
   }
- 
+
   /* LCZ */
   .lcz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
   .lcz-col { display: flex; flex-direction: column; gap: 6px; }
@@ -160,7 +160,7 @@
     font-family: 'DM Mono', monospace; font-size: 10px;
     color: var(--muted); line-height: 1.8; margin-top: 2px;
   }
- 
+
   .reset-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
     font-size: 11px; font-family: 'DM Sans', sans-serif; color: var(--muted);
@@ -169,10 +169,10 @@
     transition: all 0.15s;
   }
   .reset-btn:hover { border-color: var(--accent); color: var(--accent-light); }
- 
+
   /* ── Main ── */
   .main { display: flex; flex-direction: column; overflow: hidden; }
- 
+
   /* Stat bar */
   .stat-bar {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -186,7 +186,7 @@
   .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
   .stat-value { font-family: 'DM Mono', monospace; font-size: 19px; font-weight: 500; }
   .stat-sub { font-size: 10px; color: var(--muted); }
- 
+
   /* Charts scrollable area — all groups always visible */
   /* Section divider between groups */
   .chart-group-header {
@@ -199,7 +199,7 @@
     flex-shrink: 0; position: sticky; top: 0; z-index: 2;
   }
   .chart-group-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
- 
+
   /* Three-column grid inside each group */
   .chart-grid {
     display: grid;
@@ -214,7 +214,7 @@
     display: flex;
     min-height: 0;
   }
- 
+
   /* Each group takes equal vertical share of the scrollable area */
   .charts-area {
     flex: 1;
@@ -229,7 +229,7 @@
     flex: 1;
     min-height: 180px;
   }
-  .chart-wrap { flex: 1; padding: 12px 18px 8px; display: flex; flex-direction: column; }
+  .chart-wrap { flex: 1; padding: 12px 18px 8px 32px; display: flex; flex-direction: column; }
   .chart-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
   .chart-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .chart-title {
@@ -239,14 +239,80 @@
   .chart-desc { font-size: 10px; color: var(--muted); margin-left: auto; }
   .canvas-wrap { flex: 1; position: relative; min-height: 0; }
   .canvas-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
- 
+
+  /* ── Data modal ── */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    width: min(960px, 94vw);
+    max-height: 86vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .modal-sub { font-size: 11px; color: var(--muted); }
+  .modal-header-btns { display: flex; gap: 8px; margin-left: auto; }
+  .modal-btn {
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+    font-family: 'DM Sans', sans-serif; padding: 5px 12px; border-radius: var(--radius);
+    cursor: pointer; transition: all 0.15s; border: 1px solid var(--border);
+  }
+  .modal-btn-primary {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .modal-btn-primary:hover { background: var(--accent-light); border-color: var(--accent-light); }
+  .modal-btn-ghost { background: none; color: var(--muted); }
+  .modal-btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+  .modal-body { overflow: auto; flex: 1; }
+  .data-table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+  }
+  .data-table thead { position: sticky; top: 0; z-index: 2; }
+  .data-table th {
+    background: var(--surface2); color: var(--muted);
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 8px 14px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table th:first-child { text-align: left; }
+  .data-table td {
+    padding: 5px 14px; text-align: right;
+    border-bottom: 1px solid var(--border); color: var(--text);
+    white-space: nowrap;
+  }
+  .data-table td:first-child { text-align: left; color: var(--muted); }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; opacity: 0.5; }
 </style>
 </head>
 <body>
- 
+
 <header>
   <img src="RIL_Logo.png" alt="Resilient Infrastructure Lab logo" class="header-logo">
   <div class="header-text">
@@ -264,11 +330,16 @@
     color:var(--muted); background:none; border:1px solid var(--border);
     border-radius:var(--radius); padding:4px 10px; cursor:pointer; transition:all 0.15s;
     font-family:'DM Sans',sans-serif;">✕ Clear lock</button>
+  <button onclick="openDataModal()" style="
+    font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:500;
+    color:var(--muted); background:none; border:1px solid var(--border);
+    border-radius:var(--radius); padding:4px 10px; cursor:pointer; transition:all 0.15s;
+    font-family:'DM Sans',sans-serif;">⊞ View data</button>
 </header>
- 
+
 <div class="layout">
 <aside class="sidebar">
- 
+
   <div class="sidebar-section">
     <div class="sidebar-section-title">Urban Morphology (LCZ)</div>
     <div class="lcz-grid">
@@ -298,7 +369,7 @@
       </div>
     </div>
   </div>
- 
+
   <div class="sidebar-section">
     <div class="sidebar-section-title">Climate</div>
     <div class="param-block">
@@ -316,7 +387,7 @@
       <input type="range" id="ccrate" min="0" max="0.2" step="0.001" value="0.05" oninput="syncLabel('ccrate');updateCharts()">
     </div>
   </div>
- 
+
   <div class="sidebar-section">
     <div class="sidebar-section-title">Population &amp; Density</div>
     <div class="param-block">
@@ -348,7 +419,7 @@
       <input type="range" id="d" min="-200" max="200" step="5" value="0" oninput="syncLabel('d');updateCharts()">
     </div>
   </div>
- 
+
   <div class="sidebar-section">
     <div class="sidebar-section-title">Transport</div>
     <div class="param-block">
@@ -387,7 +458,7 @@
       <input type="range" id="lambda2" min="-1" max="1" step="0.01" value="0" oninput="syncLabel('lambda2');updateCharts()">
     </div>
   </div>
- 
+
   <div class="sidebar-section">
     <div class="sidebar-section-title">Technology &amp; Emissions</div>
     <div class="param-block">
@@ -426,13 +497,13 @@
       <input type="range" id="efgrid" min="0.01" max="0.4" step="0.005" value="0.105" oninput="syncLabel('efgrid');updateCharts()">
     </div>
   </div>
- 
+
   <button class="reset-btn" onclick="resetDefaults()">↺ Reset to defaults</button>
- 
+
 </aside>
- 
+
 <main class="main">
- 
+
   <div class="stat-bar">
     <div class="stat-card">
       <div class="stat-label">VMT at 2050</div>
@@ -455,9 +526,9 @@
       <div class="stat-sub">mi·K / day</div>
     </div>
   </div>
- 
+
   <div class="charts-area">
- 
+
     <!-- MOBILITY -->
     <div class="chart-group">
       <div class="chart-group-header">
@@ -524,7 +595,7 @@
       </div>
       </div>
     </div>
- 
+
     <!-- CONTEXT -->
     <div class="chart-group">
       <div class="chart-group-header">
@@ -563,11 +634,11 @@
       </div>
       </div>
     </div>
- 
+
   </div>
 </main>
 </div>
- 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ── LCZ profiles & descriptions ───────────────────────────────
@@ -579,7 +650,7 @@ const LCZ_PROFILES = {
   LCZ5: { a1: 0.0480, a2: -1.886, b1:  47.260, label: 'Open midrise',         desc: 'Mid-height buildings in open arrangement, mixed surfaces and vegetation.' },
   LCZ6: { a1: 0.0500, a2: -1.990, b1:  48.930, label: 'Open low-rise',        desc: 'Low buildings with open layout, gardens, significant vegetation cover.' },
 };
- 
+
 function lczParamText(key) {
   const p = LCZ_PROFILES[key];
   return `a\u2081\u202f=\u202f${p.a1}\u2002a\u2082\u202f=\u202f${p.a2}\u2002b\u2081\u202f=\u202f${p.b1}`;
@@ -593,7 +664,7 @@ function onLCZChange() {
   document.getElementById('lcz_end_params').textContent   = lczFullText(document.getElementById('lcz_end').value);
   updateCharts();
 }
- 
+
 // ── Defaults ──────────────────────────────────────────────────
 const DEFAULTS = {
   tbase: 311.0, ccrate: 0.05,
@@ -605,12 +676,12 @@ const DEFAULTS = {
   ef: 0.37, efgrid: 0.105,
 };
 const SLIDER_IDS = Object.keys(DEFAULTS);
- 
+
 const N = 251;
 const T_MAX = 24;
 const T     = Array.from({ length: N }, (_, i) => i * T_MAX / (N - 1));
 const YEARS = T.map(t => Math.round(2026 + t));
- 
+
 // ── Y-axis ranges (locked) ────────────────────────────────────
 // Keyed by chart id; set to null to auto-scale
 const Y_RANGES = {
@@ -623,66 +694,66 @@ const Y_RANGES = {
   chart_pop:  { min: 0, max: 100 },
   chart_dens: { min: 0, max: 25000 },
 };
- 
+
 // ── Simulation ────────────────────────────────────────────────
 function getVals() {
   const v = {};
   SLIDER_IDS.forEach(k => { v[k] = parseFloat(document.getElementById(k).value); });
   return v;
 }
- 
+
 function simulate(v) {
   const { tbase, ccrate, pop0, popgrowth, d0, d: d_rate,
           vmt0, amt0, cf, lambda1, lambda2,
           egrowth, elec0, elecmax, ef, efgrid } = v;
- 
+
   const lczS = LCZ_PROFILES[document.getElementById('lcz_start').value];
   const lczE = LCZ_PROFILES[document.getElementById('lcz_end').value];
- 
+
   const x0    = tbase - 273.15;
   const dmrt0 = lczS.a1 * x0 * x0 + lczS.a2 * x0 + lczS.b1 - x0;
   const dt0   = Math.max(0.001, dmrt0);
   const tmtmax = vmt0 + amt0 * cf;
   const a3 = vmt0 / (Math.pow(Math.max(1, d0), lambda1) * (lambda2 !== 0 ? Math.pow(dt0, lambda2) : 1));
- 
+
   const vmt_a=[], amt_a=[], e_a=[], h_a=[], temp_a=[], elec_a=[], pop_a=[], dens_a=[];
- 
+
   for (let i = 0; i < N; i++) {
     const t    = T[i];
     const frac = T_MAX > 0 ? t / T_MAX : 0;
- 
+
     const a1 = lczS.a1 + (lczE.a1 - lczS.a1) * frac;
     const a2 = lczS.a2 + (lczE.a2 - lczS.a2) * frac;
     const b1 = lczS.b1 + (lczE.b1 - lczS.b1) * frac;
- 
+
     const dens = d0 + d_rate * t;
     const tcc  = ccrate * t;
     const x    = (tbase + tcc) - 273.15;
- 
+
     const deltamrt = a1 * x * x + a2 * x + b1 - (tbase-273.15);
     const deltat   = deltamrt;
     const temp     = tbase + deltamrt;
- 
+
     const elec = elecmax / (1 + (elecmax / elec0 - 1) * Math.exp(-egrowth * t));
     const pop  = pop0 * Math.exp(popgrowth * t);
- 
-    const dt_safe  = Math.max(0.001, deltamrt);
+
+    const dt_safe  = Math.max(0.001, deltat);
     const vmt_base = a3 * Math.pow(Math.max(1, dens), lambda1) * (lambda2 !== 0 ? Math.pow(dt_safe, lambda2) : 1);
     const vmt_val  = Math.min(vmt_base, tmtmax);
     const amt_val  = Math.max(0, (tmtmax - vmt_val) / cf);
- 
+
     const e_val = pop * ((1 - elec) * vmt_val * ef + elec * vmt_val * efgrid);
     const h_val = pop * amt_val * temp;
- 
+
     vmt_a.push(vmt_val); amt_a.push(amt_val);
     e_a.push(e_val);     h_a.push(h_val);
     temp_a.push(temp);   elec_a.push(elec);
     pop_a.push(pop);     dens_a.push(dens);
   }
- 
+
   return { vmt: vmt_a, amt: amt_a, e: e_a, h: h_a, temp: temp_a, elec: elec_a, pop: pop_a, dens: dens_a };
 }
- 
+
 // ── Synchronized crosshair plugin ────────────────────────────
 const syncCrosshairPlugin = {
   id: 'syncCrosshair',
@@ -704,11 +775,11 @@ const syncCrosshairPlugin = {
   }
 };
 Chart.register(syncCrosshairPlugin);
- 
+
 // ── Chart factory ─────────────────────────────────────────────
 const gridColor = 'rgba(255,255,255,0.05)';
-const tickColor = '#5a5048';
- 
+const tickColor = '#8a7e76';
+
 // Scenario A colors (current), Scenario B colors (locked — lighter/dashed)
 const COLORS_A = {
   chart_vmt: '#c07a3a', chart_amt: '#7a9e6e', chart_e: '#b5254f',
@@ -720,7 +791,7 @@ const COLORS_B = {
   chart_h: '#eaaf78',  chart_temp: '#e08070', chart_elec: '#90bfcc',
   chart_pop: '#b8b0a8', chart_dens: '#c4a882',
 };
- 
+
 function makeChart(id, data) {
   const range = Y_RANGES[id];
   const colorA = COLORS_A[id];
@@ -757,15 +828,16 @@ function makeChart(id, data) {
         y: {
           min: range ? range.min : undefined,
           max: range ? range.max : undefined,
+          afterFit: scale => { scale.width = 72; },
           ticks: { color: tickColor, font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 4,
-                   callback: v => v.toFixed(2) },
+                   callback: v => v.toFixed(2), padding: 6, mirror: false },
           grid: { color: gridColor }, border: { color: gridColor }
         }
       }
     }
   });
 }
- 
+
 // ── Init ──────────────────────────────────────────────────────
 let sim = simulate(DEFAULTS);
 const chartVMT  = makeChart('chart_vmt',  sim.vmt);
@@ -778,9 +850,9 @@ const chartPop  = makeChart('chart_pop',  sim.pop);
 const chartDens = makeChart('chart_dens', sim.dens);
 const ALL_CHARTS = [chartVMT, chartAMT, chartE, chartH, chartTemp, chartElec, chartPop, chartDens];
 const CHART_KEYS = ['vmt','amt','e','h','temp','elec','pop','dens'];
- 
+
 let lockedSim = null;
- 
+
 // ── Scenario lock ─────────────────────────────────────────────
 function lockScenario() {
   lockedSim = simulate(getVals());
@@ -789,7 +861,7 @@ function lockScenario() {
   btn.style.borderColor = 'var(--accent-light)';
   btn.style.color = 'var(--accent-light)';
   document.getElementById('btn_clear').style.display = 'inline-flex';
- 
+
   ALL_CHARTS.forEach((c, i) => {
     const key = CHART_KEYS[i];
     c.data.datasets[1].data   = lockedSim[key];
@@ -797,7 +869,7 @@ function lockScenario() {
     c.update('none');
   });
 }
- 
+
 function clearLock() {
   lockedSim = null;
   const btn = document.getElementById('btn_lock');
@@ -807,7 +879,7 @@ function clearLock() {
   document.getElementById('btn_clear').style.display = 'none';
   ALL_CHARTS.forEach(c => { c.data.datasets[1].data = []; c.data.datasets[1].hidden = true; c.update('none'); });
 }
- 
+
 // ── Update ────────────────────────────────────────────────────
 function updateStats(s) {
   const last = N - 1;
@@ -816,16 +888,17 @@ function updateStats(s) {
   document.getElementById('stat_e').textContent   = s.e[last].toFixed(1);
   document.getElementById('stat_h').textContent   = s.h[last].toFixed(0);
 }
- 
+
 function updateCharts() {
   const s = simulate(getVals());
+  lastSim = s;
   ALL_CHARTS.forEach((c, i) => {
     c.data.datasets[0].data = s[CHART_KEYS[i]];
     c.update('none');
   });
   updateStats(s);
 }
- 
+
 // ── Labels ────────────────────────────────────────────────────
 function syncLabel(k) {
   const el = document.getElementById('v_' + k);
@@ -834,7 +907,7 @@ function syncLabel(k) {
   el.textContent = Math.abs(val) >= 10 ? val.toFixed(0) : val.toFixed(3);
 }
 function syncAllLabels() { SLIDER_IDS.forEach(k => syncLabel(k)); }
- 
+
 // ── Reset ─────────────────────────────────────────────────────
 function resetDefaults() {
   SLIDER_IDS.forEach(k => { document.getElementById(k).value = DEFAULTS[k]; });
@@ -844,11 +917,102 @@ function resetDefaults() {
   syncAllLabels();
   onLCZChange();
 }
- 
+
 // ── Boot ──────────────────────────────────────────────────────
 syncAllLabels();
 onLCZChange();
+lastSim = simulate(getVals());
 </script>
- 
+
+<!-- ── Data modal ── -->
+<div class="modal-backdrop" id="data_modal" onclick="closeDataModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Simulation data</div>
+        <div class="modal-sub" id="modal_sub">251 time steps · 8 variables</div>
+      </div>
+      <div class="modal-header-btns">
+        <button class="modal-btn modal-btn-primary" onclick="downloadCSV()">↓ Download CSV</button>
+        <button class="modal-btn modal-btn-ghost" onclick="document.getElementById('data_modal').classList.remove('open')">✕ Close</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <table class="data-table" id="data_table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>VMT<br><span style="font-weight:400;opacity:.6">mi/agent/day</span></th>
+            <th>AMT<br><span style="font-weight:400;opacity:.6">mi/agent/day</span></th>
+            <th>E<br><span style="font-weight:400;opacity:.6">kgCO₂/day</span></th>
+            <th>H<br><span style="font-weight:400;opacity:.6">mi·K/day</span></th>
+            <th>MRT<br><span style="font-weight:400;opacity:.6">K</span></th>
+            <th>EV share<br><span style="font-weight:400;opacity:.6">fraction</span></th>
+            <th>Population<br><span style="font-weight:400;opacity:.6">agents</span></th>
+            <th>Density<br><span style="font-weight:400;opacity:.6">pop/sq mi</span></th>
+          </tr>
+        </thead>
+        <tbody id="data_tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Store last simulation result globally so modal can access it
+let lastSim = null;
+
+function openDataModal() {
+  const s = lastSim || simulate(getVals());
+  const tbody = document.getElementById('data_tbody');
+  tbody.innerHTML = '';
+  for (let i = 0; i < N; i++) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${YEARS[i]}</td>
+      <td>${s.vmt[i].toFixed(4)}</td>
+      <td>${s.amt[i].toFixed(4)}</td>
+      <td>${s.e[i].toFixed(4)}</td>
+      <td>${s.h[i].toFixed(2)}</td>
+      <td>${s.temp[i].toFixed(4)}</td>
+      <td>${s.elec[i].toFixed(4)}</td>
+      <td>${s.pop[i].toFixed(4)}</td>
+      <td>${s.dens[i].toFixed(2)}</td>`;
+    tbody.appendChild(row);
+  }
+  document.getElementById('data_modal').classList.add('open');
+}
+
+function closeDataModal(e) {
+  // close only if clicking the backdrop itself, not the modal
+  if (e.target === document.getElementById('data_modal'))
+    document.getElementById('data_modal').classList.remove('open');
+}
+
+function downloadCSV() {
+  const s = lastSim || simulate(getVals());
+  const headers = ['Year','VMT_mi_agent_day','AMT_mi_agent_day','E_kgCO2_day','H_miK_day','MRT_K','EV_share','Population_agents','Density_pop_sqmi'];
+  const rows = [headers.join(',')];
+  for (let i = 0; i < N; i++) {
+    rows.push([
+      YEARS[i],
+      s.vmt[i].toFixed(6),
+      s.amt[i].toFixed(6),
+      s.e[i].toFixed(6),
+      s.h[i].toFixed(6),
+      s.temp[i].toFixed(6),
+      s.elec[i].toFixed(6),
+      s.pop[i].toFixed(6),
+      s.dens[i].toFixed(6),
+    ].join(','));
+  }
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `transrdm_simulation_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+</script>
+
 </body>
 </html>
